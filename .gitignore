@@ -5,3 +5,8 @@ node_modules
 !.env.example
 .DS_Store
 *.log
+
+# Eval runs are non-deterministic LLM output + full API responses.
+# Commit a baseline.json explicitly when you want to lock a checkpoint.
+apps/api/evals/runs/*
+!apps/api/evals/runs/.gitkeep
