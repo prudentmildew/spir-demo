@@ -1,12 +1,20 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { QueryRequest } from './domain/query.ts';
-import { handleQuery, type ResolveAddress } from './orchestrator/handle-query.ts';
+import {
+  handleQuery,
+  type GetMunicipalityStats,
+  type ResolveAddress,
+} from './orchestrator/handle-query.ts';
 import { resolveAddress as kartverketResolveAddress } from './tools/kartverket.ts';
+import { getMunicipalityStats as ssbGetMunicipalityStats } from './tools/ssb.ts';
 
 const PORT = Number(process.env.PORT ?? 3000);
 
 const resolveAddress: ResolveAddress = (query) =>
   kartverketResolveAddress(query, { fetch });
+
+const getMunicipalityStats: GetMunicipalityStats = (kommunenr, metric) =>
+  ssbGetMunicipalityStats(kommunenr, metric, { fetch });
 
 type JsonResponse = { status: number; body: unknown };
 
@@ -36,7 +44,7 @@ async function handle(req: IncomingMessage): Promise<JsonResponse> {
     if (!parsed.success) {
       return json(400, { error: 'invalid request', issues: parsed.error.issues });
     }
-    const response = await handleQuery(parsed.data, { resolveAddress });
+    const response = await handleQuery(parsed.data, { resolveAddress, getMunicipalityStats });
     return json(200, response);
   }
 
