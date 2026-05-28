@@ -305,6 +305,10 @@
   transform: rotate(45deg);
 }
 
+.ed__turnHeadlineText {
+  transition: color 200ms ease;
+}
+
 .ed__turnToggle:hover .ed__turnMarker,
 .ed__turnToggle:focus-visible .ed__turnMarker {
   border-color: var(--ink);
@@ -320,10 +324,6 @@
 
 .ed__turnToggle:focus-visible .ed__turnHeadlineText {
   border-bottom: 2px solid var(--teal);
-}
-
-.ed__turnHeadlineText {
-  transition: color 200ms ease;
 }
 
 .ed__pendingLine {

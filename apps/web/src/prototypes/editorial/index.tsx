@@ -346,7 +346,9 @@ function Refusal({ reason }: { reason: string }) {
   return (
     <blockquote className="ed__refusal">
       <span className="ed__refusalRule" aria-hidden="true" />
-      <p className="ed__refusalLead">Dette kan jeg ikke svare på fra kildene jeg har tilgang til.</p>
+      <p className="ed__refusalLead">
+        Dette kan jeg ikke svare på fra kildene jeg har tilgang til.
+      </p>
       <p className="ed__refusalQuote">"{reason}."</p>
       <footer className="ed__refusalAttribution">— agentens avslag</footer>
       <span className="ed__refusalRule" aria-hidden="true" />

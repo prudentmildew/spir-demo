@@ -52,6 +52,8 @@ export function EditorialApp() {
   const [resolution, setResolution] = useState<Resolution | null>(null);
   const [turns, setTurns] = useState<Turn[]>([]);
   const [pending, setPending] = useState<{ id: string; question: string } | null>(null);
+  // Accordion: at most one turn expanded at a time. null = all collapsed.
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
   const [editing, setEditing] = useState(false);
   const [addressDraft, setAddressDraft] = useState('');
@@ -66,7 +68,8 @@ export function EditorialApp() {
 
     const id = `t${++turnSeq.current}`;
     const addressUsed = overrides?.address ?? address;
-    const matchUsed = overrides?.match === null ? undefined : (overrides?.match ?? match ?? undefined);
+    const matchUsed =
+      overrides?.match === null ? undefined : (overrides?.match ?? match ?? undefined);
     setPending({ id, question });
     setDraft('');
 
@@ -80,6 +83,7 @@ export function EditorialApp() {
 
     if (result.kind !== 'ok') {
       setTurns((prev) => [...prev, { id, question, kind: 'error', error: result, addressUsed }]);
+      setExpandedId(id);
       setPending(null);
       return;
     }
@@ -97,6 +101,7 @@ export function EditorialApp() {
       ...prev,
       { id, question, kind: 'ok', response: result.response, totalMs: result.totalMs, addressUsed },
     ]);
+    setExpandedId(id); // newest answer opens; collapses the previous one
     setPending(null);
   }
 
@@ -155,8 +160,6 @@ export function EditorialApp() {
     void ask(SEED_QUESTION, { address: candidate.address, match: candidate });
   }
 
-  const activeId = pending?.id ?? turns[turns.length - 1]?.id ?? null;
-
   return (
     <div className="ed">
       <div className="ed__paperGrain" aria-hidden="true" />
@@ -195,7 +198,8 @@ export function EditorialApp() {
             <TurnView
               key={turn.id}
               turn={turn}
-              collapsed={turn.id !== activeId || idx !== turns.length - 1}
+              collapsed={turn.id !== expandedId}
+              onToggle={() => setExpandedId((cur) => (cur === turn.id ? null : turn.id))}
               footnoteOffset={turns
                 .slice(0, idx)
                 .reduce((acc, t) => acc + (t.kind === 'ok' ? t.response.citations.length : 0), 0)}
@@ -482,59 +486,116 @@ function PendingArticle({ question }: { question: string }) {
   );
 }
 
+function TurnHeadline({
+  question,
+  collapsed,
+  onToggle,
+  bodyId,
+}: {
+  question: string;
+  collapsed: boolean;
+  onToggle: () => void;
+  bodyId: string;
+}) {
+  return (
+    <h2 className="ed__turnHeadline">
+      <button
+        type="button"
+        className="ed__turnToggle"
+        onClick={onToggle}
+        aria-expanded={!collapsed}
+        aria-controls={bodyId}
+      >
+        <span className="ed__turnMarker" aria-hidden="true" />
+        <span className="ed__turnHeadlineText">{question}</span>
+      </button>
+    </h2>
+  );
+}
+
 function TurnView({
   turn,
   collapsed,
+  onToggle,
   footnoteOffset,
   turnIndex,
 }: {
   turn: Turn;
   collapsed: boolean;
+  onToggle: () => void;
   footnoteOffset: number;
   turnIndex: number;
 }) {
   if (turn.kind === 'error') {
-    return <ErrorTurn turn={turn} turnIndex={turnIndex} />;
+    return (
+      <ErrorTurn turn={turn} collapsed={collapsed} onToggle={onToggle} turnIndex={turnIndex} />
+    );
   }
+  const bodyId = `ed-turn-${turn.id}`;
   return (
     <section className={`ed__turn ${collapsed ? 'ed__turn--collapsed' : ''}`}>
       <p className="ed__turnKicker">
         Runde № {turnIndex} {turn.response.grounded ? '· grunnet' : '· avslått'}
       </p>
-      <h2 className="ed__turnHeadline">{turn.question}</h2>
+      <TurnHeadline
+        question={turn.question}
+        collapsed={collapsed}
+        onToggle={onToggle}
+        bodyId={bodyId}
+      />
 
-      {collapsed ? (
-        <CollapsedArticle turn={turn} footnoteOffset={footnoteOffset} />
-      ) : (
-        <ExpandedArticle turn={turn} footnoteOffset={footnoteOffset} />
-      )}
+      <div id={bodyId}>
+        {collapsed ? (
+          <CollapsedArticle turn={turn} footnoteOffset={footnoteOffset} />
+        ) : (
+          <ExpandedArticle turn={turn} footnoteOffset={footnoteOffset} />
+        )}
+      </div>
     </section>
   );
 }
 
 function ErrorTurn({
   turn,
+  collapsed,
+  onToggle,
   turnIndex,
 }: {
   turn: Extract<Turn, { kind: 'error' }>;
+  collapsed: boolean;
+  onToggle: () => void;
   turnIndex: number;
 }) {
   const detail =
     turn.error.kind === 'http-error'
       ? `HTTP ${turn.error.status} — ${turn.error.message}`
       : `Nettverksfeil — ${turn.error.message}`;
+  const bodyId = `ed-turn-${turn.id}`;
   return (
-    <section className="ed__turn">
+    <section className={`ed__turn ${collapsed ? 'ed__turn--collapsed' : ''}`}>
       <p className="ed__turnKicker">Runde № {turnIndex} · feilet</p>
-      <h2 className="ed__turnHeadline">{turn.question}</h2>
-      <div className="ed__errorTurn">
-        <div className="ed__errorKicker">Agenten kom ikke til kildene</div>
-        <p className="ed__errorMsg">
-          <em>Vi nådde ikke agenten denne gangen.</em> Sjekk at API-en kjører på port 3000, og prøv
-          igjen.
-        </p>
-        <p className="ed__errorDetail">{detail}</p>
-      </div>
+      <TurnHeadline
+        question={turn.question}
+        collapsed={collapsed}
+        onToggle={onToggle}
+        bodyId={bodyId}
+      />
+      {collapsed ? (
+        <div className="ed__collapsed">
+          <p className="ed__collapsedHint">
+            <em>Sammenfoldet.</em> Klikk overskriften for å utvide feilmeldingen igjen.
+          </p>
+        </div>
+      ) : (
+        <div id={bodyId} className="ed__errorTurn">
+          <div className="ed__errorKicker">Agenten kom ikke til kildene</div>
+          <p className="ed__errorMsg">
+            <em>Vi nådde ikke agenten denne gangen.</em> Sjekk at API-en kjører på port 3000, og
+            prøv igjen.
+          </p>
+          <p className="ed__errorDetail">{detail}</p>
+        </div>
+      )}
     </section>
   );
 }
