@@ -1,11 +1,14 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import { anthropic } from '@ai-sdk/anthropic';
 import { QueryRequest } from './domain/query.ts';
 import {
   handleQuery,
   type GetMunicipalityStats,
   type ResolveAddress,
+  type Route,
   type SearchArticles,
 } from './orchestrator/handle-query.ts';
+import { makeRouter } from './orchestrator/router.ts';
 import { searchArticles as wikipediaSearchArticles } from './retrievers/wikipedia.ts';
 import { resolveAddress as kartverketResolveAddress } from './tools/kartverket.ts';
 import { getMunicipalityStats as ssbGetMunicipalityStats } from './tools/ssb.ts';
@@ -20,6 +23,8 @@ const getMunicipalityStats: GetMunicipalityStats = (kommunenr, metric) =>
 
 const searchArticles: SearchArticles = (query) =>
   wikipediaSearchArticles(query, { fetch });
+
+const route: Route = makeRouter(anthropic('claude-haiku-4-5-20251001'));
 
 type JsonResponse = { status: number; body: unknown };
 
@@ -53,6 +58,7 @@ async function handle(req: IncomingMessage): Promise<JsonResponse> {
       resolveAddress,
       getMunicipalityStats,
       searchArticles,
+      route,
     });
     return json(200, response);
   }

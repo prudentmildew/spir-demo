@@ -1,6 +1,7 @@
 import type { Chunk } from '../domain/chunk.ts';
 import type { Match } from '../domain/match.ts';
 import type { QueryRequest, QueryResponse } from '../domain/query.ts';
+import type { RoutingPlan } from '../domain/routing-plan.ts';
 import type { StatPoint } from '../domain/stat-point.ts';
 
 export type ResolveAddress = (query: string) => Promise<Match[]>;
@@ -9,9 +10,14 @@ export type GetMunicipalityStats = (
   metric: 'population',
 ) => Promise<StatPoint[]>;
 export type SearchArticles = (query: string) => Promise<Chunk[]>;
+export type Route = (query: string, match: Match) => Promise<RoutingPlan>;
 
 const KARTVERKET_URL = 'https://ws.geonorge.no/adresser/v1/sok';
 const SSB_URL = 'https://data.ssb.no/api/pxwebapi/v2-beta/tables/11342/data';
+
+type Trace = QueryResponse['trace'];
+type TraceStep = Trace[number];
+type Citation = QueryResponse['citations'][number];
 
 export async function handleQuery(
   input: QueryRequest,
@@ -19,6 +25,7 @@ export async function handleQuery(
     resolveAddress: ResolveAddress;
     getMunicipalityStats: GetMunicipalityStats;
     searchArticles: SearchArticles;
+    route: Route;
   },
 ): Promise<QueryResponse> {
   const query = input.address ?? input.query;
@@ -41,99 +48,124 @@ export async function handleQuery(
       grounded: false,
       citations: [],
       trace: [
-        { step: 'resolve_address', tool: 'kartverket', input: { query }, ok: true, output: matches },
+        {
+          step: 'resolve_address',
+          tool: 'kartverket',
+          input: { query },
+          ok: true,
+          output: matches,
+        },
       ],
     };
   }
 
   const match = matches[0]!;
-  const resolveStep = {
+  const resolveStep: TraceStep = {
     step: 'resolve_address',
     tool: 'kartverket',
     input: { query },
-    ok: true as const,
+    ok: true,
     output: match,
   };
-  const kartverketCitation = { source: 'kartverket', url: KARTVERKET_URL, field: 'kommunenr' };
+  const kartverketCitation: Citation = {
+    source: 'kartverket',
+    url: KARTVERKET_URL,
+    field: 'kommunenr',
+  };
 
-  const ssbInput = { kommunenr: match.kommunenr, metric: 'population' as const };
+  const plan = await deps.route(input.query, match);
 
-  let ssbSentence: string;
-  let ssbCitations: QueryResponse['citations'];
-  let ssbTraceStep: QueryResponse['trace'][number];
-  let ssbGrounded: boolean;
-  try {
-    const stats = await deps.getMunicipalityStats(match.kommunenr, 'population');
-    const latest = stats.reduce<StatPoint | undefined>(
-      (acc, p) => (acc === undefined || p.year > acc.year ? p : acc),
-      undefined,
-    );
-    ssbTraceStep = {
-      step: 'get_municipality_stats',
-      tool: 'ssb',
-      input: ssbInput,
-      ok: true,
-      output: stats,
-    };
-    if (latest === undefined) {
-      ssbSentence = `${match.address} resolved to kommune ${match.kommunenr}, but population data wasn't available.`;
-      ssbCitations = [];
-      ssbGrounded = false;
-    } else {
-      ssbSentence = `${match.address} is in kommune ${match.kommunenr}. Population in ${latest.year} was ${latest.value}.`;
-      ssbCitations = [{ source: 'ssb', url: SSB_URL, field: 'population' }];
-      ssbGrounded = true;
-    }
-  } catch {
-    ssbSentence = `${match.address} resolved to kommune ${match.kommunenr}, but population data wasn't available.`;
-    ssbCitations = [];
-    ssbGrounded = false;
-    ssbTraceStep = {
-      step: 'get_municipality_stats',
-      tool: 'ssb',
-      input: ssbInput,
-      ok: false,
-    };
-  }
+  const trace: Trace = [resolveStep];
+  const citations: Citation[] = [kartverketCitation];
 
-  const wikipediaInput = { query: match.kommunenavn };
-  let chunks: Chunk[] = [];
-  let wikipediaOk = true;
-  try {
-    chunks = await deps.searchArticles(match.kommunenavn);
-  } catch {
-    wikipediaOk = false;
-  }
+  let ssbInvoked = false;
+  let ssbLatest: StatPoint | null = null;
+  let ssbDegraded = false;
+  let wikiTopChunk: Chunk | null = null;
 
-  const wikipediaTraceStep: QueryResponse['trace'][number] = wikipediaOk
-    ? {
-        step: 'search_articles',
-        tool: 'wikipedia',
-        input: wikipediaInput,
-        ok: true,
-        output: chunks,
+  for (const step of plan.steps) {
+    if (step.tool === 'get_municipality_stats') {
+      ssbInvoked = true;
+      const ssbInput = { kommunenr: match.kommunenr, metric: step.metric };
+      try {
+        const stats = await deps.getMunicipalityStats(match.kommunenr, step.metric);
+        trace.push({
+          step: 'get_municipality_stats',
+          tool: 'ssb',
+          input: ssbInput,
+          ok: true,
+          output: stats,
+        });
+        const latest = stats.reduce<StatPoint | undefined>(
+          (acc, p) => (acc === undefined || p.year > acc.year ? p : acc),
+          undefined,
+        );
+        if (latest === undefined) {
+          ssbDegraded = true;
+        } else {
+          ssbLatest = latest;
+          citations.push({ source: 'ssb', url: SSB_URL, field: step.metric });
+        }
+      } catch {
+        ssbDegraded = true;
+        trace.push({
+          step: 'get_municipality_stats',
+          tool: 'ssb',
+          input: ssbInput,
+          ok: false,
+        });
       }
-    : {
-        step: 'search_articles',
-        tool: 'wikipedia',
-        input: wikipediaInput,
-        ok: false,
-      };
+    } else if (step.tool === 'search_articles') {
+      const wikipediaInput = { query: step.query };
+      try {
+        const chunks = await deps.searchArticles(step.query);
+        trace.push({
+          step: 'search_articles',
+          tool: 'wikipedia',
+          input: wikipediaInput,
+          ok: true,
+          output: chunks,
+        });
+        const top = chunks[0];
+        if (top !== undefined) {
+          wikiTopChunk = top;
+          citations.push({ source: 'wikipedia', url: top.url, field: top.title });
+        }
+      } catch {
+        trace.push({
+          step: 'search_articles',
+          tool: 'wikipedia',
+          input: wikipediaInput,
+          ok: false,
+        });
+      }
+    }
+  }
 
-  const topChunk = chunks[0];
-  const answer =
-    topChunk !== undefined
-      ? `${ssbSentence} About ${match.kommunenavn}: ${topChunk.text}`
-      : ssbSentence;
-  const citations: QueryResponse['citations'] = [kartverketCitation, ...ssbCitations];
-  if (topChunk !== undefined) {
-    citations.push({ source: 'wikipedia', url: topChunk.url, field: topChunk.title });
+  const sentences: string[] = [];
+  let grounded = true;
+
+  if (ssbInvoked && ssbLatest !== null) {
+    sentences.push(
+      `${match.address} is in kommune ${match.kommunenr}. Population in ${ssbLatest.year} was ${ssbLatest.value}.`,
+    );
+  } else if (ssbInvoked && ssbDegraded) {
+    sentences.push(
+      `${match.address} resolved to kommune ${match.kommunenr}, but population data wasn't available.`,
+    );
+    grounded = false;
+  } else {
+    sentences.push(`${match.address} is in kommune ${match.kommunenr}.`);
+  }
+
+  if (wikiTopChunk !== null) {
+    sentences.push(`About ${match.kommunenavn}: ${wikiTopChunk.text}`);
   }
 
   return {
-    answer,
-    grounded: ssbGrounded,
+    answer: sentences.join(' '),
+    grounded,
     citations,
-    trace: [resolveStep, ssbTraceStep, wikipediaTraceStep],
+    trace,
   };
 }
