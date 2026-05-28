@@ -1,12 +1,12 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
-import { z } from 'zod';
+import { QueryRequest } from './domain/query.ts';
+import { handleQuery, type ResolveAddress } from './orchestrator/handle-query.ts';
+import { resolveAddress as kartverketResolveAddress } from './tools/kartverket.ts';
 
 const PORT = Number(process.env.PORT ?? 3000);
 
-const QueryRequest = z.object({
-  query: z.string().min(1),
-  address: z.string().optional(),
-});
+const resolveAddress: ResolveAddress = (query) =>
+  kartverketResolveAddress(query, { fetch });
 
 type JsonResponse = { status: number; body: unknown };
 
@@ -36,10 +36,8 @@ async function handle(req: IncomingMessage): Promise<JsonResponse> {
     if (!parsed.success) {
       return json(400, { error: 'invalid request', issues: parsed.error.issues });
     }
-    return json(501, {
-      error: 'not implemented',
-      message: 'orchestrator not yet wired',
-    });
+    const response = await handleQuery(parsed.data, { resolveAddress });
+    return json(200, response);
   }
 
   return json(404, { error: 'not found' });
