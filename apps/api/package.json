@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node --watch src/index.ts",
-    "start": "node src/index.ts",
+    "dev": "node --watch --env-file=../../.env src/index.ts",
+    "start": "node --env-file=../../.env src/index.ts",
     "test": "node --test",
     "typecheck": "tsc --noEmit",
     "eval": "node src/evals/run.ts"
