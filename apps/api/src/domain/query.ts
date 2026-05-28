@@ -1,9 +1,11 @@
 import { z } from 'zod';
+import { Match } from './match.ts';
 import { RoutingPlan } from './routing-plan.ts';
 
 export const QueryRequest = z.object({
   query: z.string().min(1),
   address: z.string().optional(),
+  match: Match.optional(),
 });
 
 export const Citation = z.object({

@@ -35,55 +35,70 @@ export async function handleQuery(
   },
 ): Promise<QueryResponse> {
   const query = input.address ?? input.query;
-  let matches: Match[];
-  try {
-    matches = await deps.resolveAddress(query);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    return {
-      answer: `Address lookup is unavailable right now (${message}). Please try again.`,
-      grounded: false,
-      citations: [],
-      trace: [{ step: 'resolve_address', tool: 'kartverket', input: { query }, ok: false }],
+  let match: Match;
+  let resolveStep: TraceStep;
+
+  if (input.match) {
+    match = input.match;
+    resolveStep = {
+      step: 'resolve_address',
+      tool: 'kartverket',
+      input: { prefilled: true, kommunenr: match.kommunenr },
+      ok: true,
+      output: match,
+    };
+  } else {
+    let matches: Match[];
+    try {
+      matches = await deps.resolveAddress(query);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return {
+        answer: `Address lookup is unavailable right now (${message}). Please try again.`,
+        grounded: false,
+        citations: [],
+        trace: [{ step: 'resolve_address', tool: 'kartverket', input: { query }, ok: false }],
+      };
+    }
+
+    if (matches.length === 0) {
+      return {
+        answer: `No match for address "${query}". Please refine and try again.`,
+        grounded: false,
+        citations: [],
+        trace: [
+          { step: 'resolve_address', tool: 'kartverket', input: { query }, ok: true, output: [] },
+        ],
+      };
+    }
+
+    if (matches.length > 1) {
+      return {
+        answer: `Address "${query}" matched ${matches.length} candidates — please disambiguate.`,
+        grounded: false,
+        citations: [],
+        trace: [
+          {
+            step: 'resolve_address',
+            tool: 'kartverket',
+            input: { query },
+            ok: true,
+            output: matches,
+          },
+        ],
+      };
+    }
+
+    match = matches[0]!;
+    resolveStep = {
+      step: 'resolve_address',
+      tool: 'kartverket',
+      input: { query },
+      ok: true,
+      output: match,
     };
   }
 
-  if (matches.length === 0) {
-    return {
-      answer: `No match for address "${query}". Please refine and try again.`,
-      grounded: false,
-      citations: [],
-      trace: [
-        { step: 'resolve_address', tool: 'kartverket', input: { query }, ok: true, output: [] },
-      ],
-    };
-  }
-
-  if (matches.length > 1) {
-    return {
-      answer: `Address "${query}" matched ${matches.length} candidates — please disambiguate.`,
-      grounded: false,
-      citations: [],
-      trace: [
-        {
-          step: 'resolve_address',
-          tool: 'kartverket',
-          input: { query },
-          ok: true,
-          output: matches,
-        },
-      ],
-    };
-  }
-
-  const match = matches[0]!;
-  const resolveStep: TraceStep = {
-    step: 'resolve_address',
-    tool: 'kartverket',
-    input: { query },
-    ok: true,
-    output: match,
-  };
   const kartverketCitation: Citation = {
     source: 'kartverket',
     url: KARTVERKET_URL,

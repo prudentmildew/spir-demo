@@ -6,7 +6,7 @@ export type QueryResult =
   | { kind: 'network-error'; message: string; totalMs: number };
 
 export async function postQuery(
-  input: { query: string; address?: string },
+  input: { query: string; address?: string; match?: Match },
   opts?: { signal?: AbortSignal },
 ): Promise<QueryResult> {
   const started = performance.now();

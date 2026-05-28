@@ -59,18 +59,19 @@ export function EditorialApp() {
   const inFlight = useRef<AbortController | null>(null);
   const didMount = useRef(false);
 
-  async function ask(question: string, addressOverride?: string) {
+  async function ask(question: string, overrides?: { address?: string; match?: Match | null }) {
     inFlight.current?.abort();
     const ctrl = new AbortController();
     inFlight.current = ctrl;
 
     const id = `t${++turnSeq.current}`;
-    const addressUsed = addressOverride ?? address;
+    const addressUsed = overrides?.address ?? address;
+    const matchUsed = overrides?.match === null ? undefined : (overrides?.match ?? match ?? undefined);
     setPending({ id, question });
     setDraft('');
 
     const result = await postQuery(
-      { query: question, address: addressUsed },
+      { query: question, address: addressUsed, match: matchUsed },
       { signal: ctrl.signal },
     );
 
@@ -103,7 +104,7 @@ export function EditorialApp() {
   useEffect(() => {
     if (didMount.current) return;
     didMount.current = true;
-    void ask(SEED_QUESTION, SEED_ADDRESS);
+    void ask(SEED_QUESTION, { address: SEED_ADDRESS, match: null });
     // No cleanup: under React StrictMode the mount effect runs twice in dev,
     // and an abort() in the first pass's cleanup would kill the only fetch
     // we ever fire (the didMount guard blocks the second pass from re-firing).
@@ -122,7 +123,7 @@ export function EditorialApp() {
     setMatch(null);
     setResolution(null);
     setTurns([]);
-    void ask(SEED_QUESTION, next);
+    void ask(SEED_QUESTION, { address: next, match: null });
   }
 
   function cancelAddressEdit() {
@@ -142,7 +143,7 @@ export function EditorialApp() {
     setMatch(null);
     setResolution(null);
     setTurns([]);
-    void ask(edge.question, edge.address);
+    void ask(edge.question, { address: edge.address, match: null });
   }
 
   function pickCandidate(candidate: Match) {
@@ -151,7 +152,7 @@ export function EditorialApp() {
     setMatch(candidate);
     setResolution({ kind: 'one', match: candidate });
     setTurns([]);
-    void ask(SEED_QUESTION, candidate.address);
+    void ask(SEED_QUESTION, { address: candidate.address, match: candidate });
   }
 
   const activeId = pending?.id ?? turns[turns.length - 1]?.id ?? null;
