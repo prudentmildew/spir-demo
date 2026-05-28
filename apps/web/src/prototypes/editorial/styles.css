@@ -269,6 +269,63 @@
   margin: 0 0 28px;
 }
 
+/* headline doubles as the accordion toggle; the chevron hangs in the
+   left margin (marker 10px + gap 24px = 34px) so the text stays flush
+   with the dateline address above it. */
+.ed__turnToggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+  margin-left: -34px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.ed__turnMarker {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  margin-top: 0.34em;
+  border-right: 1.5px solid var(--teal);
+  border-bottom: 1.5px solid var(--teal);
+  transform: rotate(-45deg);
+  transform-origin: 60% 40%;
+  transition:
+    transform 240ms ease,
+    border-color 200ms ease;
+}
+
+.ed__turn:not(.ed__turn--collapsed) .ed__turnMarker {
+  transform: rotate(45deg);
+}
+
+.ed__turnToggle:hover .ed__turnMarker,
+.ed__turnToggle:focus-visible .ed__turnMarker {
+  border-color: var(--ink);
+}
+
+.ed__turnToggle:hover .ed__turnHeadlineText {
+  color: var(--teal);
+}
+
+.ed__turnToggle:focus-visible {
+  outline: none;
+}
+
+.ed__turnToggle:focus-visible .ed__turnHeadlineText {
+  border-bottom: 2px solid var(--teal);
+}
+
+.ed__turnHeadlineText {
+  transition: color 200ms ease;
+}
+
 .ed__pendingLine {
   font-size: 17px;
   color: var(--ink-soft);

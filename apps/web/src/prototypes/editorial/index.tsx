@@ -26,6 +26,8 @@ export function Editorial() {
     scenarioKey: ScenarioKey;
     question: string;
   } | null>(null);
+  // Accordion: at most one turn expanded at a time. null = all collapsed.
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const turnSeq = useRef(0);
 
   function ask(question: string, scenarioKey: ScenarioKey | null) {
@@ -40,11 +42,10 @@ export function Editorial() {
         ...prev,
         { id, question, scenarioKey, response: FIXTURES[scenarioKey], totalMs, startedAt: started },
       ]);
+      setExpandedId(id); // newest answer opens; collapses the previous one
       setPending(null);
     }, FAKE_LATENCY_MS[scenarioKey]);
   }
-
-  const activeId = pending?.id ?? turns[turns.length - 1]?.id ?? null;
 
   return (
     <div className="ed">
@@ -71,7 +72,8 @@ export function Editorial() {
             <ArticleTurn
               key={turn.id}
               turn={turn}
-              collapsed={turn.id !== activeId || idx !== turns.length - 1}
+              collapsed={turn.id !== expandedId}
+              onToggle={() => setExpandedId((cur) => (cur === turn.id ? null : turn.id))}
               footnoteOffset={turns
                 .slice(0, idx)
                 .reduce((acc, t) => acc + t.response.citations.length, 0)}
@@ -226,26 +228,42 @@ function PendingArticle({ question }: { question: string }) {
 function ArticleTurn({
   turn,
   collapsed,
+  onToggle,
   footnoteOffset,
   turnIndex,
 }: {
   turn: Turn;
   collapsed: boolean;
+  onToggle: () => void;
   footnoteOffset: number;
   turnIndex: number;
 }) {
+  const bodyId = `ed-turn-${turn.id}`;
   return (
     <section className={`ed__turn ${collapsed ? 'ed__turn--collapsed' : ''}`}>
       <p className="ed__turnKicker">
         Runde № {turnIndex} {turn.response.grounded ? '· grunnet' : '· avslått'}
       </p>
-      <h2 className="ed__turnHeadline">{turn.question}</h2>
+      <h2 className="ed__turnHeadline">
+        <button
+          type="button"
+          className="ed__turnToggle"
+          onClick={onToggle}
+          aria-expanded={!collapsed}
+          aria-controls={bodyId}
+        >
+          <span className="ed__turnMarker" aria-hidden="true" />
+          <span className="ed__turnHeadlineText">{turn.question}</span>
+        </button>
+      </h2>
 
-      {collapsed ? (
-        <CollapsedArticle turn={turn} footnoteOffset={footnoteOffset} />
-      ) : (
-        <ExpandedArticle turn={turn} footnoteOffset={footnoteOffset} />
-      )}
+      <div id={bodyId}>
+        {collapsed ? (
+          <CollapsedArticle turn={turn} footnoteOffset={footnoteOffset} />
+        ) : (
+          <ExpandedArticle turn={turn} footnoteOffset={footnoteOffset} />
+        )}
+      </div>
     </section>
   );
 }
