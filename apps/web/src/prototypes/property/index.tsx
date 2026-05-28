@@ -488,12 +488,10 @@ function prettySource(s: string): string {
       return 'Kartverket';
     case 'ssb':
       return 'SSB';
-    case 'wikipedia':
-      return 'Wikipedia';
     case 'met':
       return 'MET';
-    case 'arxiv':
-      return 'arXiv';
+    case 'web':
+      return 'Nettsøk';
     default:
       return s;
   }

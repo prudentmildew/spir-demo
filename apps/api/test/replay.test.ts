@@ -26,24 +26,24 @@ const statPoint: StatPoint = {
 
 const recordedBothSources: QueryResponse = {
   answer:
-    'Karl Johans gate 5, 0154 Oslo ligger i kommune 0301. Folketallet i 2024 var 717 710. Om Oslo: Oslo is the capital and most populous city of Norway.',
+    'Karl Johans gate 5, 0154 Oslo ligger i kommune 0301. Folketallet i 2024 var 717 710. Fra «Oslo»: Oslo is the capital and most populous city of Norway.',
   grounded: true,
   citations: [
     { source: 'kartverket', url: 'https://ws.geonorge.no/adresser/v1/sok', field: 'kommunenr' },
     { source: 'ssb', url: 'https://data.ssb.no/api/pxwebapi/v2-beta/tables/11342/data', field: 'population' },
-    { source: 'wikipedia', url: 'https://en.wikipedia.org/wiki/Oslo', field: 'Oslo' },
+    { source: 'web', url: 'https://en.wikipedia.org/wiki/Oslo', field: 'Oslo' },
   ],
   trace: [
     { step: 'resolve_address', tool: 'kartverket', input: { query: 'Karl Johans gate 5, Oslo' }, ok: true, output: sampleMatch },
     { step: 'get_municipality_stats', tool: 'ssb', input: { kommunenr: '0301', metric: 'population' }, ok: true, output: [statPoint] },
-    { step: 'search_articles', tool: 'wikipedia', input: { query: 'Oslo' }, ok: true, output: [
+    { step: 'search_web', tool: 'web', input: { query: 'Oslo' }, ok: true, output: [
       { text: 'Oslo is the capital and most populous city of Norway.', title: 'Oslo', url: 'https://en.wikipedia.org/wiki/Oslo', score: 0.95 },
     ] },
   ],
   plan: {
     steps: [
       { tool: 'get_municipality_stats', metric: 'population' },
-      { tool: 'search_articles', query: 'Oslo' },
+      { tool: 'search_web', query: 'Oslo' },
     ],
   },
 };
@@ -80,7 +80,7 @@ test('replayCase reproduces the recorded answer/grounded/citations end-to-end', 
 });
 
 test('replay adapter throws with a clear message when the orchestrator calls a tool that has no recorded step', async () => {
-  // recordedBothSources covers SSB + Wikipedia; MET was never called. If replay
+  // recordedBothSources covers SSB + web search; MET was never called. If replay
   // wires MET regardless, calling it should be loud, not return undefined.
   const deps = buildReplayDeps(recordedBothSources);
 
@@ -99,7 +99,7 @@ test('buildReplayDeps yields the recorded routing plan and recorded tool outputs
   const stats = await deps.getMunicipalityStats('0301', 'population');
   assert.deepEqual(stats, [statPoint]);
 
-  const chunks = await deps.searchArticles('Oslo');
+  const chunks = await deps.searchWeb('Oslo');
   assert.equal(chunks.length, 1);
   assert.equal(chunks[0]?.title, 'Oslo');
 });

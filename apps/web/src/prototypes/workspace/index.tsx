@@ -447,7 +447,7 @@ function AskPanel() {
           <h2 className="ws__askTitle">Hva som helst om denne eiendommen</h2>
         </div>
         <div className="ws__askMeta ws__mono">
-          <span>ruter →</span> kartverket · ssb · met · wikipedia · arxiv
+          <span>ruter →</span> kartverket · ssb · met · web
         </div>
       </header>
 
@@ -642,7 +642,7 @@ const ACTIVITY: ActivityEntry[] = [
     when: '14:28',
     who: 'agent',
     what: 'Løste folketall + nabolag',
-    meta: 'ssb · wikipedia · 3 kilder',
+    meta: 'ssb · web · 3 kilder',
     tone: 'ok',
   },
   {
@@ -707,12 +707,10 @@ function prettySource(s: string): string {
       return 'Kartverket';
     case 'ssb':
       return 'SSB';
-    case 'wikipedia':
-      return 'Wikipedia';
     case 'met':
       return 'MET';
-    case 'arxiv':
-      return 'arXiv';
+    case 'web':
+      return 'Nettsøk';
     default:
       return s;
   }

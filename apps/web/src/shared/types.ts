@@ -36,15 +36,13 @@ export type GetMunicipalityStatsStep = {
   tool: 'get_municipality_stats';
   metric: 'population';
 };
-export type SearchArticlesStep = { tool: 'search_articles'; query: string };
+export type SearchWebStep = { tool: 'search_web'; query: string };
 export type GetWeatherStep = { tool: 'get_weather' };
-export type SearchPapersStep = { tool: 'search_papers'; query: string };
 
 export type RoutingStep =
   | GetMunicipalityStatsStep
-  | SearchArticlesStep
-  | GetWeatherStep
-  | SearchPapersStep;
+  | SearchWebStep
+  | GetWeatherStep;
 
 export type RoutingPlan = {
   steps: RoutingStep[];
@@ -79,15 +77,14 @@ export type RailItem = {
 
 // Stable content-derived keys so React lists don't lean on array index.
 // Trace-step keys disambiguate steps with the same tool name (e.g. multiple
-// search_articles calls) by appending the JSON of `input`.
+// search_web calls) by appending the JSON of `input`.
 export const traceStepKey = (s: TraceStep): string =>
   `${s.step}:${s.tool}:${JSON.stringify(s.input)}`;
 
 export const routingStepKey = (s: RoutingStep): string => {
   if (s.tool === 'get_municipality_stats') return `gms:${s.metric}`;
-  if (s.tool === 'search_articles') return `sa:${s.query}`;
+  if (s.tool === 'search_web') return `sw:${s.query}`;
   if (s.tool === 'get_weather') return 'gw';
-  if (s.tool === 'search_papers') return `sp:${s.query}`;
   return JSON.stringify(s);
 };
 

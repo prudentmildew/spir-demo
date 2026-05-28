@@ -11,9 +11,8 @@ export type GetMunicipalityStats = (
   kommunenr: string,
   metric: 'population',
 ) => Promise<StatPoint[]>;
-export type SearchArticles = (query: string) => Promise<Chunk[]>;
 export type GetWeather = (lat: number, lon: number) => Promise<Forecast>;
-export type SearchPapers = (query: string) => Promise<Chunk[]>;
+export type SearchWeb = (query: string) => Promise<Chunk[]>;
 export type Route = (query: string, match: Match) => Promise<RoutingPlan>;
 
 const KARTVERKET_URL = 'https://ws.geonorge.no/adresser/v1/sok';
@@ -29,9 +28,8 @@ export async function handleQuery(
   deps: {
     resolveAddress: ResolveAddress;
     getMunicipalityStats: GetMunicipalityStats;
-    searchArticles: SearchArticles;
     getWeather: GetWeather;
-    searchPapers: SearchPapers;
+    searchWeb: SearchWeb;
     route: Route;
   },
 ): Promise<QueryResponse> {
@@ -135,11 +133,10 @@ export async function handleQuery(
   let ssbInvoked = false;
   let ssbLatest: StatPoint | null = null;
   let ssbDegraded = false;
-  let wikiTopChunk: Chunk | null = null;
+  let webTopChunk: Chunk | null = null;
   let metInvoked = false;
   let forecast: Forecast | null = null;
   let metDegraded = false;
-  let arxivTopChunk: Chunk | null = null;
 
   for (const step of plan.steps) {
     if (step.tool === 'get_municipality_stats') {
@@ -173,27 +170,27 @@ export async function handleQuery(
           ok: false,
         });
       }
-    } else if (step.tool === 'search_articles') {
-      const wikipediaInput = { query: step.query };
+    } else if (step.tool === 'search_web') {
+      const input = { query: step.query };
       try {
-        const chunks = await deps.searchArticles(step.query);
+        const chunks = await deps.searchWeb(step.query);
         trace.push({
-          step: 'search_articles',
-          tool: 'wikipedia',
-          input: wikipediaInput,
+          step: 'search_web',
+          tool: 'web',
+          input,
           ok: true,
           output: chunks,
         });
         const top = chunks[0];
         if (top !== undefined) {
-          wikiTopChunk = top;
-          citations.push({ source: 'wikipedia', url: top.url, field: top.title });
+          webTopChunk = top;
+          citations.push({ source: 'web', url: top.url, field: top.title });
         }
       } catch {
         trace.push({
-          step: 'search_articles',
-          tool: 'wikipedia',
-          input: wikipediaInput,
+          step: 'search_web',
+          tool: 'web',
+          input,
           ok: false,
         });
       }
@@ -208,30 +205,6 @@ export async function handleQuery(
       } catch {
         metDegraded = true;
         trace.push({ step: 'get_weather', tool: 'met', input: metInput, ok: false });
-      }
-    } else if (step.tool === 'search_papers') {
-      const arxivInput = { query: step.query };
-      try {
-        const chunks = await deps.searchPapers(step.query);
-        trace.push({
-          step: 'search_papers',
-          tool: 'arxiv',
-          input: arxivInput,
-          ok: true,
-          output: chunks,
-        });
-        const top = chunks[0];
-        if (top !== undefined) {
-          arxivTopChunk = top;
-          citations.push({ source: 'arxiv', url: top.url, field: top.title });
-        }
-      } catch {
-        trace.push({
-          step: 'search_papers',
-          tool: 'arxiv',
-          input: arxivInput,
-          ok: false,
-        });
       }
     }
   }
@@ -252,8 +225,8 @@ export async function handleQuery(
     sentences.push(`${match.address} ligger i kommune ${match.kommunenr}.`);
   }
 
-  if (wikiTopChunk !== null) {
-    sentences.push(`Om ${match.kommunenavn}: ${wikiTopChunk.text}`);
+  if (webTopChunk !== null) {
+    sentences.push(`Fra «${webTopChunk.title}»: ${webTopChunk.text}`);
   }
 
   if (metInvoked && forecast !== null) {
@@ -263,10 +236,6 @@ export async function handleQuery(
   } else if (metInvoked && metDegraded) {
     sentences.push(`Værvarsel var ikke tilgjengelig.`);
     grounded = false;
-  }
-
-  if (arxivTopChunk !== null) {
-    sentences.push(`Relevant forskning: «${arxivTopChunk.title}» — ${arxivTopChunk.text}`);
   }
 
   return {

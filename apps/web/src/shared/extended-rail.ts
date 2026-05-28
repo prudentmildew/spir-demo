@@ -38,7 +38,7 @@ export const RAIL_GROUPS: RailGroup[] = [
     key: 'omradet',
     title: 'Området',
     subtitle: 'Nabolaget',
-    sources: 'Wikipedia · Kartverket · OpenStreetMap',
+    sources: 'Nettsøk · Kartverket · OpenStreetMap',
     glyph: '◐',
     tint: 'mint',
   },

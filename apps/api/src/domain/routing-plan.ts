@@ -6,8 +6,8 @@ export const GetMunicipalityStatsStep = z.object({
   metric: Metric,
 });
 
-export const SearchArticlesStep = z.object({
-  tool: z.literal('search_articles'),
+export const SearchWebStep = z.object({
+  tool: z.literal('search_web'),
   query: z.string().min(1),
 });
 
@@ -17,16 +17,10 @@ export const GetWeatherStep = z.object({
   tool: z.literal('get_weather'),
 });
 
-export const SearchPapersStep = z.object({
-  tool: z.literal('search_papers'),
-  query: z.string().min(1),
-});
-
 export const RoutingStep = z.discriminatedUnion('tool', [
   GetMunicipalityStatsStep,
-  SearchArticlesStep,
+  SearchWebStep,
   GetWeatherStep,
-  SearchPapersStep,
 ]);
 
 export const RoutingPlan = z.object({
@@ -35,8 +29,7 @@ export const RoutingPlan = z.object({
 });
 
 export type GetMunicipalityStatsStep = z.infer<typeof GetMunicipalityStatsStep>;
-export type SearchArticlesStep = z.infer<typeof SearchArticlesStep>;
+export type SearchWebStep = z.infer<typeof SearchWebStep>;
 export type GetWeatherStep = z.infer<typeof GetWeatherStep>;
-export type SearchPapersStep = z.infer<typeof SearchPapersStep>;
 export type RoutingStep = z.infer<typeof RoutingStep>;
 export type RoutingPlan = z.infer<typeof RoutingPlan>;

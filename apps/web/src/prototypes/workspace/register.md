@@ -39,7 +39,7 @@ labels in tiny uppercase. The page reads as a status surface.
   scenario (`population`, `weather`, `neighborhood`) and rendered with a
   domain-appropriate visual: a sparkline trend for population, a sun-and-cloud
   glyph for weather, a 4-tile mini-grid for the area profile. Each cell carries
-  a small "by SSB / by MET / by Wikipedia" source tag and a measured `Nms`
+  a small "by SSB / by MET / by Nettsøk" source tag and a measured `Nms`
   latency stamp.
 - **Sidebar navigation** with sections for Workspace, Recent properties (current
   property highlighted with an emerald rail), and Agent (with `124 routing

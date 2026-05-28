@@ -10,16 +10,14 @@ import {
   type GetWeather,
   type ResolveAddress,
   type Route,
-  type SearchArticles,
-  type SearchPapers,
+  type SearchWeb,
 } from '../orchestrator/handle-query.ts';
 
 export type ReplayDeps = {
   resolveAddress: ResolveAddress;
   getMunicipalityStats: GetMunicipalityStats;
-  searchArticles: SearchArticles;
   getWeather: GetWeather;
-  searchPapers: SearchPapers;
+  searchWeb: SearchWeb;
   route: Route;
 };
 
@@ -54,9 +52,8 @@ export function buildReplayDeps(recorded: QueryResponse): ReplayDeps {
     resolveAddress: async () => matches,
     route: async () => recorded.plan as RoutingPlan,
     getMunicipalityStats: yieldFromStep<StatPoint[]>('get_municipality_stats'),
-    searchArticles: yieldFromStep<Chunk[]>('search_articles'),
     getWeather: yieldFromStep<Forecast>('get_weather'),
-    searchPapers: yieldFromStep<Chunk[]>('search_papers'),
+    searchWeb: yieldFromStep<Chunk[]>('search_web'),
   };
 }
 

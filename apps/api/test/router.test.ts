@@ -41,14 +41,14 @@ test('router parses a population-only plan from the model', async () => {
 
 test('router parses a search-only plan with a focused query', async () => {
   const model = mockGenerate(
-    '{"steps":[{"tool":"search_articles","query":"Grünerløkka"}]}',
+    '{"steps":[{"tool":"search_web","query":"Grünerløkka"}]}',
   );
   const route = makeRouter(model);
 
   const plan = await route('tell me about Grünerløkka', sampleMatch);
 
   assert.deepEqual(plan, {
-    steps: [{ tool: 'search_articles', query: 'Grünerløkka' }],
+    steps: [{ tool: 'search_web', query: 'Grünerløkka' }],
   });
 });
 

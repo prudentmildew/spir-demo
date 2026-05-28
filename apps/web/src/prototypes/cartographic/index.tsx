@@ -178,7 +178,7 @@ function EmptyState() {
       <div className="cart__sectionLabel">Klikk et forslag · velg et spørsmål</div>
       <p>
         Agenten svarer på spørsmål om eiendommen i fokus ved å rute mellom strukturerte verktøy
-        (Kartverket, SSB, MET) og ustrukturerte uthentere (Wikipedia, arXiv). Hver påstand er
+        (Kartverket, SSB, MET) og ustrukturert nettsøk. Hver påstand er
         kildebelagt. Der ingen kilde passer, avslår den ærlig.
       </p>
     </div>

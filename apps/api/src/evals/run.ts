@@ -5,8 +5,7 @@ import { anthropic } from '@ai-sdk/anthropic';
 import type { QueryResponse } from '../domain/query.ts';
 import { handleQuery, type Route } from '../orchestrator/handle-query.ts';
 import { makeRouter } from '../orchestrator/router.ts';
-import { searchArticles } from '../retrievers/wikipedia.ts';
-import { searchPapers } from '../retrievers/arxiv.ts';
+import { searchWeb as webSearchWeb } from '../retrievers/web.ts';
 import { resolveAddress } from '../tools/kartverket.ts';
 import { createMetCache, getWeather } from '../tools/met.ts';
 import { getMunicipalityStats } from '../tools/ssb.ts';
@@ -83,10 +82,9 @@ async function main() {
     resolveAddress: (q: string) => resolveAddress(q, { fetch }),
     getMunicipalityStats: (k: string, m: 'population') =>
       getMunicipalityStats(k, m, { fetch }),
-    searchArticles: (q: string) => searchArticles(q, { fetch }),
     getWeather: (lat: number, lon: number) =>
       getWeather(lat, lon, { fetch, cache: metCache }),
-    searchPapers: (q: string) => searchPapers(q, { fetch }),
+    searchWeb: (q: string) => webSearchWeb(q, { model: anthropic('claude-sonnet-4-6') }),
     route,
   };
 

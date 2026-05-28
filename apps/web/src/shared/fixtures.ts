@@ -7,8 +7,8 @@ import type { QueryResponse, ScenarioKey } from './types.ts';
 const KARTVERKET_URL = 'https://ws.geonorge.no/adresser/v1/sok';
 const SSB_URL = 'https://data.ssb.no/api/pxwebapi/v2-beta/tables/11342/data';
 const MET_URL = 'https://api.met.no/weatherapi/locationforecast/2.0/compact';
-const OSLO_WIKI_URL = 'https://no.wikipedia.org/wiki/Oslo';
-const FROGNER_WIKI_URL = 'https://no.wikipedia.org/wiki/Frogner';
+const OSLO_WEB_URL = 'https://www.oslo.kommune.no/om-oslo-kommune/';
+const FROGNER_WEB_URL = 'https://www.oslo.kommune.no/bydeler/bydel-frogner/';
 
 const KARTVERKET_CITATION = {
   source: 'kartverket',
@@ -95,22 +95,22 @@ export const WEATHER: QueryResponse = {
 
 export const NEIGHBORHOOD: QueryResponse = {
   answer:
-    'Dronning Mauds gate 10, 0250 Oslo ligger i kommune 0301. Om Oslo: Frogner er en velstående bydel vest i Oslo sentrum, kjent for skulpturparken, ambassadestrøket og 1800-talls­arkitekturen langs Bygdøy allé.',
+    'Dronning Mauds gate 10, 0250 Oslo ligger i kommune 0301. Fra «Frogner»: Frogner er en velstående bydel vest i Oslo sentrum, kjent for skulpturparken, ambassadestrøket og 1800-talls­arkitekturen langs Bygdøy allé.',
   citations: [
     KARTVERKET_CITATION,
-    { source: 'wikipedia', url: FROGNER_WIKI_URL, field: 'Frogner' },
+    { source: 'web', url: FROGNER_WEB_URL, field: 'Frogner' },
   ],
   trace: [
     RESOLVE_STEP,
     {
-      step: 'search_articles',
-      tool: 'wikipedia',
+      step: 'search_web',
+      tool: 'web',
       input: { query: 'Frogner Oslo bydel' },
       ok: true,
       output: [
         {
           title: 'Frogner',
-          url: FROGNER_WIKI_URL,
+          url: FROGNER_WEB_URL,
           text: 'Frogner er en velstående bydel vest i Oslo sentrum, kjent for skulpturparken, ambassadestrøket og 1800-talls­arkitekturen langs Bygdøy allé.',
         },
       ],
@@ -118,17 +118,17 @@ export const NEIGHBORHOOD: QueryResponse = {
   ],
   grounded: true,
   plan: {
-    steps: [{ tool: 'search_articles', query: 'Frogner Oslo bydel' }],
+    steps: [{ tool: 'search_web', query: 'Frogner Oslo bydel' }],
   },
 };
 
 export const BOTH: QueryResponse = {
   answer:
-    'Dronning Mauds gate 10, 0250 Oslo ligger i kommune 0301. Folketallet i 2024 var 717 710. Om Oslo: Oslo er Norges hovedstad og største by, innerst i Oslofjorden — et levende politisk, økonomisk og kulturelt sentrum.',
+    'Dronning Mauds gate 10, 0250 Oslo ligger i kommune 0301. Folketallet i 2024 var 717 710. Fra «Oslo»: Oslo er Norges hovedstad og største by, innerst i Oslofjorden — et levende politisk, økonomisk og kulturelt sentrum.',
   citations: [
     KARTVERKET_CITATION,
     { source: 'ssb', url: SSB_URL, field: 'population' },
-    { source: 'wikipedia', url: OSLO_WIKI_URL, field: 'Oslo' },
+    { source: 'web', url: OSLO_WEB_URL, field: 'Oslo' },
   ],
   trace: [
     RESOLVE_STEP,
@@ -140,14 +140,14 @@ export const BOTH: QueryResponse = {
       output: [{ year: 2024, value: 717_710 }],
     },
     {
-      step: 'search_articles',
-      tool: 'wikipedia',
+      step: 'search_web',
+      tool: 'web',
       input: { query: 'Oslo' },
       ok: true,
       output: [
         {
           title: 'Oslo',
-          url: OSLO_WIKI_URL,
+          url: OSLO_WEB_URL,
           text: 'Oslo er Norges hovedstad og største by, innerst i Oslofjorden — et levende politisk, økonomisk og kulturelt sentrum.',
         },
       ],
@@ -157,7 +157,7 @@ export const BOTH: QueryResponse = {
   plan: {
     steps: [
       { tool: 'get_municipality_stats', metric: 'population' },
-      { tool: 'search_articles', query: 'Oslo' },
+      { tool: 'search_web', query: 'Oslo' },
     ],
   },
 };

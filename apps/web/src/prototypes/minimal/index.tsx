@@ -294,7 +294,7 @@ function ColophonFooter() {
       </div>
       <div className="min__colophonRight">
         <span className="min__colophonLabel">Kilder i dag</span>
-        Kartverket · SSB · MET · Wikipedia
+        Kartverket · SSB · MET · Nettsøk
       </div>
     </footer>
   );
@@ -310,12 +310,10 @@ function prettySource(s: string): string {
       return 'Kartverket';
     case 'ssb':
       return 'SSB';
-    case 'wikipedia':
-      return 'Wikipedia';
     case 'met':
       return 'MET';
-    case 'arxiv':
-      return 'arXiv';
+    case 'web':
+      return 'Nettsøk';
     default:
       return s;
   }

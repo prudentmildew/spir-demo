@@ -7,12 +7,10 @@ import {
   type GetWeather,
   type ResolveAddress,
   type Route,
-  type SearchArticles,
-  type SearchPapers,
+  type SearchWeb,
 } from './orchestrator/handle-query.ts';
 import { makeRouter } from './orchestrator/router.ts';
-import { searchArticles as wikipediaSearchArticles } from './retrievers/wikipedia.ts';
-import { searchPapers as arxivSearchPapers } from './retrievers/arxiv.ts';
+import { searchWeb as webSearchWeb } from './retrievers/web.ts';
 import { resolveAddress as kartverketResolveAddress } from './tools/kartverket.ts';
 import { createMetCache, getWeather as metGetWeather } from './tools/met.ts';
 import { getMunicipalityStats as ssbGetMunicipalityStats } from './tools/ssb.ts';
@@ -25,14 +23,12 @@ const resolveAddress: ResolveAddress = (query) =>
 const getMunicipalityStats: GetMunicipalityStats = (kommunenr, metric) =>
   ssbGetMunicipalityStats(kommunenr, metric, { fetch });
 
-const searchArticles: SearchArticles = (query) =>
-  wikipediaSearchArticles(query, { fetch });
+const searchWeb: SearchWeb = (query) =>
+  webSearchWeb(query, { model: anthropic('claude-sonnet-4-6') });
 
 const metCache = createMetCache();
 const getWeather: GetWeather = (lat, lon) =>
   metGetWeather(lat, lon, { fetch, cache: metCache });
-
-const searchPapers: SearchPapers = (query) => arxivSearchPapers(query, { fetch });
 
 const route: Route = makeRouter(anthropic('claude-haiku-4-5-20251001'));
 
@@ -67,9 +63,8 @@ async function handle(req: IncomingMessage): Promise<JsonResponse> {
     const response = await handleQuery(parsed.data, {
       resolveAddress,
       getMunicipalityStats,
-      searchArticles,
       getWeather,
-      searchPapers,
+      searchWeb,
       route,
     });
     return json(200, response);

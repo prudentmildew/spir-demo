@@ -9,12 +9,12 @@ export type GoldenCase = {
       // Tools the router is expected to invoke after resolve_address.
       // Empty array means the case should be answered from kartverket alone (or, for bad-address, never reach the router).
       tools: Array<
-        'get_municipality_stats' | 'search_articles' | 'get_weather' | 'search_papers'
+        'get_municipality_stats' | 'search_web' | 'get_weather'
       >;
     };
     answer: {
       mustContain: Array<string | RegExp>;
-      citationSources: Array<'kartverket' | 'ssb' | 'wikipedia' | 'met' | 'arxiv'>;
+      citationSources: Array<'kartverket' | 'ssb' | 'web' | 'met'>;
     };
   };
 };
@@ -41,11 +41,10 @@ export const goldenSet: GoldenCase[] = [
     expect: {
       matchKommunenr: '0301',
       grounded: true,
-      routing: { tools: ['search_articles'] },
+      routing: { tools: ['search_web'] },
       answer: {
-        // kommunenavn comes back upper-cased from Kartverket; match case-insensitively.
-        mustContain: ['kommune 0301', /om oslo/i],
-        citationSources: ['kartverket', 'wikipedia'],
+        mustContain: ['kommune 0301', /Fra «.+»:/],
+        citationSources: ['kartverket', 'web'],
       },
     },
   },
@@ -56,14 +55,14 @@ export const goldenSet: GoldenCase[] = [
     expect: {
       matchKommunenr: '0301',
       grounded: true,
-      routing: { tools: ['get_municipality_stats', 'search_articles'] },
+      routing: { tools: ['get_municipality_stats', 'search_web'] },
       answer: {
         mustContain: [
           'kommune 0301',
           /Folketallet i 20\d{2} var \d{3} \d{3}/,
-          /om oslo/i,
+          /Fra «.+»:/,
         ],
-        citationSources: ['kartverket', 'ssb', 'wikipedia'],
+        citationSources: ['kartverket', 'ssb', 'web'],
       },
     },
   },
@@ -136,12 +135,14 @@ export const goldenSet: GoldenCase[] = [
     expect: {
       matchKommunenr: '0301',
       grounded: true,
-      routing: { tools: ['search_papers'] },
+      routing: { tools: ['search_web'] },
       answer: {
-        // arXiv result content is unstable; assert only the sentence frame and the citation source.
-        // Frame is Norwegian; the quoted title/abstract stays in source language per ADR-0009.
-        mustContain: ['kommune 0301', /Relevant forskning:/],
-        citationSources: ['kartverket', 'arxiv'],
+        // Web result content is non-deterministic; assert only the sentence frame and the `web`
+        // citation source, never the content. Keeping this case alongside `story-only` proves that
+        // both a "character" question ("What is the area like?") and a "research" question route to
+        // the single `search_web` step. Frame is Norwegian per ADR-0009.
+        mustContain: ['kommune 0301', /Fra «.+»:/],
+        citationSources: ['kartverket', 'web'],
       },
     },
   },
