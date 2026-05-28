@@ -29,7 +29,7 @@ export const goldenSet: GoldenCase[] = [
       grounded: true,
       routing: { tools: ['get_municipality_stats'] },
       answer: {
-        mustContain: ['kommune 0301', /Population in 20\d{2} was \d{5,7}/],
+        mustContain: ['kommune 0301', /Folketallet i 20\d{2} var \d{3} \d{3}/],
         citationSources: ['kartverket', 'ssb'],
       },
     },
@@ -44,7 +44,7 @@ export const goldenSet: GoldenCase[] = [
       routing: { tools: ['search_articles'] },
       answer: {
         // kommunenavn comes back upper-cased from Kartverket; match case-insensitively.
-        mustContain: ['kommune 0301', /about oslo/i],
+        mustContain: ['kommune 0301', /om oslo/i],
         citationSources: ['kartverket', 'wikipedia'],
       },
     },
@@ -60,8 +60,8 @@ export const goldenSet: GoldenCase[] = [
       answer: {
         mustContain: [
           'kommune 0301',
-          /Population in 20\d{2} was \d{5,7}/,
-          /about oslo/i,
+          /Folketallet i 20\d{2} var \d{3} \d{3}/,
+          /om oslo/i,
         ],
         citationSources: ['kartverket', 'ssb', 'wikipedia'],
       },
@@ -90,7 +90,7 @@ export const goldenSet: GoldenCase[] = [
       grounded: true,
       routing: { tools: ['get_municipality_stats'] },
       answer: {
-        mustContain: ['kommune 4601', /Population in 20\d{2} was \d{5,7}/],
+        mustContain: ['kommune 4601', /Folketallet i 20\d{2} var \d{3} \d{3}/],
         citationSources: ['kartverket', 'ssb'],
       },
     },
@@ -104,7 +104,7 @@ export const goldenSet: GoldenCase[] = [
       grounded: true,
       routing: { tools: ['get_municipality_stats'] },
       answer: {
-        mustContain: ['kommune 0301', /Population in 20\d{2} was \d{5,7}/],
+        mustContain: ['kommune 0301', /Folketallet i 20\d{2} var \d{3} \d{3}/],
         citationSources: ['kartverket', 'ssb'],
       },
     },
@@ -118,9 +118,13 @@ export const goldenSet: GoldenCase[] = [
       grounded: true,
       routing: { tools: ['get_weather'] },
       answer: {
-        // Forecast sentence template: "Current weather at the property: X°C, code, Y mm ...".
-        // Temperature can be negative; symbol_code is snake_case lowercase.
-        mustContain: ['kommune 0301', /-?\d+(\.\d+)?°C/, /[a-z_]+(day|night|polartwilight)/],
+        // Forecast sentence template: "Aktuelt vær ved eiendommen: X °C, <symbol-nb>, Y mm nedbør ...".
+        // Temperature uses nb-NO comma decimal; symbol is Norwegian per orchestrator/format.ts.
+        mustContain: [
+          'kommune 0301',
+          /-?\d+(,\d+)? °C/,
+          /klarvær|lettskyet|delvis skyet|skyet|tåke|regn|snø|sludd/,
+        ],
         citationSources: ['kartverket', 'met'],
       },
     },
@@ -135,7 +139,8 @@ export const goldenSet: GoldenCase[] = [
       routing: { tools: ['search_papers'] },
       answer: {
         // arXiv result content is unstable; assert only the sentence frame and the citation source.
-        mustContain: ['kommune 0301', /Relevant research:/],
+        // Frame is Norwegian; the quoted title/abstract stays in source language per ADR-0009.
+        mustContain: ['kommune 0301', /Relevant forskning:/],
         citationSources: ['kartverket', 'arxiv'],
       },
     },
@@ -149,7 +154,9 @@ export const goldenSet: GoldenCase[] = [
       grounded: false,
       routing: { tools: [] },
       answer: {
-        mustContain: [/don't have|can't|cannot|no .* data|unable|out of scope|not available/i],
+        // Out-of-scope: orchestrator frames "X ligger i kommune Y, men <reason>." (NB),
+        // router writes the reason in NB per its system prompt.
+        mustContain: [/, men /, /ikke|matrikkel|hjemmelshaver|register|kilde/i],
         citationSources: ['kartverket'],
       },
     },
@@ -163,7 +170,7 @@ export const goldenSet: GoldenCase[] = [
       grounded: false,
       routing: { tools: [] },
       answer: {
-        mustContain: [/candidates|disambiguate/i],
+        mustContain: [/kandidater|velg/i],
         citationSources: [],
       },
     },
@@ -177,7 +184,7 @@ export const goldenSet: GoldenCase[] = [
       grounded: false,
       routing: { tools: [] },
       answer: {
-        mustContain: [/no match|refine/i],
+        mustContain: [/ingen treff|mer presis/i],
         citationSources: [],
       },
     },

@@ -4,6 +4,7 @@ import type { Match } from '../domain/match.ts';
 import type { QueryRequest, QueryResponse } from '../domain/query.ts';
 import type { RoutingPlan } from '../domain/routing-plan.ts';
 import type { StatPoint } from '../domain/stat-point.ts';
+import { nb, symbolNb } from './format.ts';
 
 export type ResolveAddress = (query: string) => Promise<Match[]>;
 export type GetMunicipalityStats = (
@@ -54,7 +55,7 @@ export async function handleQuery(
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       return {
-        answer: `Address lookup is unavailable right now (${message}). Please try again.`,
+        answer: `Adresseoppslaget er utilgjengelig akkurat nå (${message}). Prøv igjen.`,
         grounded: false,
         citations: [],
         trace: [{ step: 'resolve_address', tool: 'kartverket', input: { query }, ok: false }],
@@ -63,7 +64,7 @@ export async function handleQuery(
 
     if (matches.length === 0) {
       return {
-        answer: `No match for address "${query}". Please refine and try again.`,
+        answer: `Fant ingen treff for adressen «${query}». Prøv en mer presis adresse.`,
         grounded: false,
         citations: [],
         trace: [
@@ -74,7 +75,7 @@ export async function handleQuery(
 
     if (matches.length > 1) {
       return {
-        answer: `Address "${query}" matched ${matches.length} candidates — please disambiguate.`,
+        answer: `Adressen «${query}» matchet ${matches.length} kandidater — velg én.`,
         grounded: false,
         citations: [],
         trace: [
@@ -111,7 +112,7 @@ export async function handleQuery(
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     return {
-      answer: `${match.address} is in kommune ${match.kommunenr}, but the router is unavailable right now (${message}).`,
+      answer: `${match.address} ligger i kommune ${match.kommunenr}, men ruteren er utilgjengelig akkurat nå (${message}).`,
       grounded: false,
       citations: [kartverketCitation],
       trace: [resolveStep],
@@ -120,7 +121,7 @@ export async function handleQuery(
 
   if (plan.outOfScope !== undefined) {
     return {
-      answer: `${match.address} is in kommune ${match.kommunenr}, but ${plan.outOfScope.reason}.`,
+      answer: `${match.address} ligger i kommune ${match.kommunenr}, men ${plan.outOfScope.reason}.`,
       grounded: false,
       citations: [kartverketCitation],
       trace: [resolveStep],
@@ -240,32 +241,32 @@ export async function handleQuery(
 
   if (ssbInvoked && ssbLatest !== null) {
     sentences.push(
-      `${match.address} is in kommune ${match.kommunenr}. Population in ${ssbLatest.year} was ${ssbLatest.value}.`,
+      `${match.address} ligger i kommune ${match.kommunenr}. Folketallet i ${ssbLatest.year} var ${nb(ssbLatest.value)}.`,
     );
   } else if (ssbInvoked && ssbDegraded) {
     sentences.push(
-      `${match.address} resolved to kommune ${match.kommunenr}, but population data wasn't available.`,
+      `${match.address} ligger i kommune ${match.kommunenr}, men folketall var ikke tilgjengelig.`,
     );
     grounded = false;
   } else {
-    sentences.push(`${match.address} is in kommune ${match.kommunenr}.`);
+    sentences.push(`${match.address} ligger i kommune ${match.kommunenr}.`);
   }
 
   if (wikiTopChunk !== null) {
-    sentences.push(`About ${match.kommunenavn}: ${wikiTopChunk.text}`);
+    sentences.push(`Om ${match.kommunenavn}: ${wikiTopChunk.text}`);
   }
 
   if (metInvoked && forecast !== null) {
     sentences.push(
-      `Current weather at the property: ${forecast.temperatureCelsius}°C, ${forecast.symbolCode}, ${forecast.precipitationMmNext6h} mm precipitation expected in the next 6 hours.`,
+      `Aktuelt vær ved eiendommen: ${nb(forecast.temperatureCelsius)} °C, ${symbolNb(forecast.symbolCode)}, ${nb(forecast.precipitationMmNext6h)} mm nedbør ventet de neste 6 timene.`,
     );
   } else if (metInvoked && metDegraded) {
-    sentences.push(`Weather forecast wasn't available.`);
+    sentences.push(`Værvarsel var ikke tilgjengelig.`);
     grounded = false;
   }
 
   if (arxivTopChunk !== null) {
-    sentences.push(`Relevant research: "${arxivTopChunk.title}" — ${arxivTopChunk.text}`);
+    sentences.push(`Relevant forskning: «${arxivTopChunk.title}» — ${arxivTopChunk.text}`);
   }
 
   return {

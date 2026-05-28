@@ -67,7 +67,7 @@ test('single match + SSB returns one StatPoint: grounded answer from both source
   assert.equal(response.grounded, true);
   assert.equal(
     response.answer,
-    'Karl Johans gate 5, 0154 Oslo is in kommune 0301. Population in 2024 was 717710.',
+    'Karl Johans gate 5, 0154 Oslo ligger i kommune 0301. Folketallet i 2024 var 717 710.',
   );
   assert.equal(response.citations.length, 2);
   assert.equal(response.citations[0]?.source, 'kartverket');
@@ -102,7 +102,7 @@ test('single match + SSB returns multiple StatPoints: answer uses latest year', 
 
   assert.equal(response.grounded, true);
   assert.match(response.answer, /2024/);
-  assert.match(response.answer, /717710/);
+  assert.match(response.answer, /717 710/);
   assert.doesNotMatch(response.answer, /2022|2023/);
 });
 
@@ -116,8 +116,8 @@ test('single match + SSB returns empty: degrades to grounded:false, kartverket-o
   );
 
   assert.equal(response.grounded, false);
-  assert.match(response.answer, /population/i);
-  assert.match(response.answer, /not available|wasn't available|unavailable/i);
+  assert.match(response.answer, /folketall/i);
+  assert.match(response.answer, /ikke tilgjengelig/i);
   assert.equal(response.citations.length, 1);
   assert.equal(response.citations[0]?.source, 'kartverket');
   assert.equal(response.trace.length, 3);
@@ -139,8 +139,8 @@ test('single match + SSB throws: degrades to grounded:false, SSB trace step ok:f
   );
 
   assert.equal(response.grounded, false);
-  assert.match(response.answer, /population/i);
-  assert.match(response.answer, /not available|wasn't available|unavailable/i);
+  assert.match(response.answer, /folketall/i);
+  assert.match(response.answer, /ikke tilgjengelig/i);
   assert.equal(response.citations.length, 1);
   assert.equal(response.citations[0]?.source, 'kartverket');
   assert.equal(response.trace.length, 3);
@@ -166,7 +166,7 @@ test('zero matches: handler returns grounded:false clarification', async () => {
   );
 
   assert.equal(response.grounded, false);
-  assert.match(response.answer, /address/i);
+  assert.match(response.answer, /adresse/i);
   assert.equal(response.citations.length, 0);
   assert.equal(response.trace.length, 1);
   assert.equal(response.trace[0]?.step, 'resolve_address');
@@ -196,7 +196,7 @@ test('multiple matches: handler returns clarification with candidates in trace',
   );
 
   assert.equal(response.grounded, false);
-  assert.match(response.answer, /candidates|multiple|ambiguous|disambiguate/i);
+  assert.match(response.answer, /kandidater|velg/i);
   assert.equal(response.citations.length, 0);
   assert.equal(response.trace.length, 1);
   assert.equal(response.trace[0]?.ok, true);
@@ -232,7 +232,7 @@ test('single match + SSB OK + Wikipedia returns one chunk: grounded answer weave
   assert.deepEqual(searchCalls, ['Oslo']);
   assert.equal(response.grounded, true);
   assert.match(response.answer, /kommune 0301/);
-  assert.match(response.answer, /Population in 2024 was 717710/);
+  assert.match(response.answer, /Folketallet i 2024 var 717 710/);
   assert.match(response.answer, /Oslo is the capital and most populous city of Norway\./);
   assert.equal(response.citations.length, 3);
   assert.equal(response.citations[0]?.source, 'kartverket');
@@ -304,7 +304,7 @@ test('single match + SSB OK + Wikipedia returns empty: no Wikipedia sentence, ss
   assert.equal(response.grounded, true);
   assert.equal(
     response.answer,
-    'Karl Johans gate 5, 0154 Oslo is in kommune 0301. Population in 2024 was 717710.',
+    'Karl Johans gate 5, 0154 Oslo ligger i kommune 0301. Folketallet i 2024 var 717 710.',
   );
   assert.equal(response.citations.length, 2);
   assert.equal(response.citations[0]?.source, 'kartverket');
@@ -334,7 +334,7 @@ test('single match + SSB OK + Wikipedia throws: no Wikipedia sentence, ssb-only 
   assert.equal(response.grounded, true);
   assert.equal(
     response.answer,
-    'Karl Johans gate 5, 0154 Oslo is in kommune 0301. Population in 2024 was 717710.',
+    'Karl Johans gate 5, 0154 Oslo ligger i kommune 0301. Folketallet i 2024 var 717 710.',
   );
   assert.equal(response.citations.length, 2);
   assert.equal(response.citations[0]?.source, 'kartverket');
@@ -364,8 +364,8 @@ test('single match + SSB degraded (empty) + Wikipedia returns chunk: degraded SS
   );
 
   assert.equal(response.grounded, false);
-  assert.match(response.answer, /population/i);
-  assert.match(response.answer, /not available|wasn't available|unavailable/i);
+  assert.match(response.answer, /folketall/i);
+  assert.match(response.answer, /ikke tilgjengelig/i);
   assert.match(response.answer, /Oslo is the capital of Norway\./);
   assert.equal(response.citations.length, 2);
   assert.equal(response.citations[0]?.source, 'kartverket');
@@ -500,7 +500,7 @@ test('route is empty: neither tool called, kartverket-only locator answer, groun
   );
 
   assert.equal(response.grounded, true);
-  assert.equal(response.answer, 'Karl Johans gate 5, 0154 Oslo is in kommune 0301.');
+  assert.equal(response.answer, 'Karl Johans gate 5, 0154 Oslo ligger i kommune 0301.');
   assert.equal(response.citations.length, 1);
   assert.equal(response.citations[0]?.source, 'kartverket');
   assert.equal(response.trace.length, 1);
@@ -560,7 +560,7 @@ test('route omits get_municipality_stats: getMunicipalityStats not called, no ss
   assert.equal(response.grounded, true);
   assert.equal(
     response.answer,
-    'Karl Johans gate 5, 0154 Oslo is in kommune 0301. About Oslo: Oslo is the capital and most populous city of Norway.',
+    'Karl Johans gate 5, 0154 Oslo ligger i kommune 0301. Om Oslo: Oslo is the capital and most populous city of Norway.',
   );
   assert.equal(response.citations.length, 2);
   assert.equal(response.citations[0]?.source, 'kartverket');
@@ -605,9 +605,9 @@ test('route picks get_weather: getWeather called with match lat/lon, met citatio
 
   assert.deepEqual(calls, [{ lat: 59.911491, lon: 10.741234 }]);
   assert.equal(response.grounded, true);
-  assert.match(response.answer, /13\.4°C/);
-  assert.match(response.answer, /clearsky_day/);
-  assert.match(response.answer, /0 mm/);
+  assert.match(response.answer, /13,4 °C/);
+  assert.match(response.answer, /klarvær/);
+  assert.match(response.answer, /0 mm nedbør/);
   assert.equal(response.citations.length, 2);
   assert.equal(response.citations[0]?.source, 'kartverket');
   assert.equal(response.citations[1]?.source, 'met');
@@ -639,8 +639,8 @@ test('route picks get_weather but MET throws: degraded sentence, no met citation
   );
 
   assert.equal(response.grounded, false);
-  assert.match(response.answer, /weather/i);
-  assert.match(response.answer, /not available|wasn't available|unavailable/i);
+  assert.match(response.answer, /værvarsel/i);
+  assert.match(response.answer, /ikke tilgjengelig/i);
   assert.equal(response.citations.length, 1);
   assert.equal(response.citations[0]?.source, 'kartverket');
   assert.equal(response.trace.length, 2);
@@ -716,7 +716,7 @@ test('route omits search_articles: searchArticles not called, no wikipedia citat
   assert.equal(response.grounded, true);
   assert.equal(
     response.answer,
-    'Karl Johans gate 5, 0154 Oslo is in kommune 0301. Population in 2024 was 717710.',
+    'Karl Johans gate 5, 0154 Oslo ligger i kommune 0301. Folketallet i 2024 var 717 710.',
   );
   assert.equal(response.citations.length, 2);
   assert.equal(response.citations[0]?.source, 'kartverket');

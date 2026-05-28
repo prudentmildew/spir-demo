@@ -26,7 +26,7 @@ const statPoint: StatPoint = {
 
 const recordedBothSources: QueryResponse = {
   answer:
-    'Karl Johans gate 5, 0154 Oslo is in kommune 0301. Population in 2024 was 717710. About Oslo: Oslo is the capital and most populous city of Norway.',
+    'Karl Johans gate 5, 0154 Oslo ligger i kommune 0301. Folketallet i 2024 var 717 710. Om Oslo: Oslo is the capital and most populous city of Norway.',
   grounded: true,
   citations: [
     { source: 'kartverket', url: 'https://ws.geonorge.no/adresser/v1/sok', field: 'kommunenr' },
@@ -49,7 +49,7 @@ const recordedBothSources: QueryResponse = {
 };
 
 const recordedSsbThrew: QueryResponse = {
-  answer: "Karl Johans gate 5, 0154 Oslo resolved to kommune 0301, but population data wasn't available.",
+  answer: 'Karl Johans gate 5, 0154 Oslo ligger i kommune 0301, men folketall var ikke tilgjengelig.',
   grounded: false,
   citations: [
     { source: 'kartverket', url: 'https://ws.geonorge.no/adresser/v1/sok', field: 'kommunenr' },

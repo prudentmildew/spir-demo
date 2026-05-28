@@ -18,6 +18,7 @@ Rules:
 - Pick the smallest set of steps that can answer the question. Do not fan out unnecessarily.
 - If the question only needs the address/matrikkel/kommunenr (purely identity), return { steps: [] } with no outOfScope.
 - If the question is out of scope (see above), return { steps: [], outOfScope: { reason: "<one-line reason naming what's missing>" } }. Do not invoke any tool just to produce a citation; refusal is the correct answer.
+- Write the refusal \`reason\` in Norwegian bokmål. The orchestrator embeds it directly into a Norwegian sentence ("X ligger i kommune Y, men <reason>."), so it must read naturally there — no leading capital, no trailing period, no English. Use the domain vocabulary (matrikkel, kommunenr, hjemmelshaver, heftelse, servitutt) when naming what's missing.
 - For search_articles, choose a focused query — usually the kommunenavn, unless the question mentions a specific neighbourhood, district, or landmark.
 - For search_papers, prefer search_articles over search_papers for general-character or descriptive questions about the area; only reach for search_papers when the user explicitly asks for research, papers, or studies.
 - When multiple tools apply, list them in this order: get_municipality_stats, search_articles, get_weather, search_papers.`;

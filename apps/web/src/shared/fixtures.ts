@@ -71,7 +71,7 @@ export const POPULATION: QueryResponse = {
 
 export const WEATHER: QueryResponse = {
   answer:
-    'Dronning Mauds gate 10, 0250 Oslo ligger i kommune 0301. Været akkurat nå ved eiendommen: 9°C, delvis skyet, 0,4 mm nedbør forventet de neste 6 timene.',
+    'Dronning Mauds gate 10, 0250 Oslo ligger i kommune 0301. Aktuelt vær ved eiendommen: 9 °C, delvis skyet, 0,4 mm nedbør ventet de neste 6 timene.',
   citations: [KARTVERKET_CITATION, { source: 'met', url: MET_URL, field: 'forecast' }],
   trace: [
     RESOLVE_STEP,
@@ -95,7 +95,7 @@ export const WEATHER: QueryResponse = {
 
 export const NEIGHBORHOOD: QueryResponse = {
   answer:
-    'Dronning Mauds gate 10, 0250 Oslo ligger i kommune 0301. Om Frogner: Frogner er en velstående bydel vest i Oslo sentrum, kjent for skulpturparken, ambassadestrøket og 1800-talls­arkitekturen langs Bygdøy allé.',
+    'Dronning Mauds gate 10, 0250 Oslo ligger i kommune 0301. Om Oslo: Frogner er en velstående bydel vest i Oslo sentrum, kjent for skulpturparken, ambassadestrøket og 1800-talls­arkitekturen langs Bygdøy allé.',
   citations: [
     KARTVERKET_CITATION,
     { source: 'wikipedia', url: FROGNER_WIKI_URL, field: 'Frogner' },
