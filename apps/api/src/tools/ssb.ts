@@ -43,6 +43,9 @@ export async function getMunicipalityStats(
     }),
   });
 
+  if (!res.ok) {
+    throw new Error(`ssb responded ${res.status} ${res.statusText}`);
+  }
   const body = SsbJsonStat2.parse(await res.json());
 
   // For a single-Region, single-ContentsCode query the value array is indexed

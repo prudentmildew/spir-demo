@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { EditorialApp } from './app/index.tsx';
 import { Cartographic } from './prototypes/cartographic/index.tsx';
 import { Developer } from './prototypes/developer/index.tsx';
 import { Editorial } from './prototypes/editorial/index.tsx';
@@ -8,13 +9,20 @@ import { Property } from './prototypes/property/index.tsx';
 import { Workspace } from './prototypes/workspace/index.tsx';
 import './landing.css';
 
-type Route = 'landing' | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g';
+type PrototypeLetter = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g';
+type Route = { kind: 'app' } | { kind: 'landing' } | { kind: 'prototype'; letter: PrototypeLetter };
+
+const PROTOTYPE_LETTERS = new Set<PrototypeLetter>(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
 
 const parseHash = (): Route => {
-  const h = window.location.hash.replace(/^#\/?/, '');
-  if (h === 'a' || h === 'b' || h === 'c' || h === 'd' || h === 'e' || h === 'f' || h === 'g')
-    return h;
-  return 'landing';
+  const h = window.location.hash.replace(/^#\/?/, '').replace(/\/$/, '');
+  if (h === '' || h === '/') return { kind: 'app' };
+  if (h === 'prototypes') return { kind: 'landing' };
+  const m = h.match(/^prototypes\/([a-g])$/);
+  if (m && PROTOTYPE_LETTERS.has(m[1] as PrototypeLetter)) {
+    return { kind: 'prototype', letter: m[1] as PrototypeLetter };
+  }
+  return { kind: 'app' };
 };
 
 export function App() {
@@ -26,14 +34,15 @@ export function App() {
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
-  if (route === 'a') return <Cartographic />;
-  if (route === 'b') return <Editorial />;
-  if (route === 'c') return <Developer />;
-  if (route === 'd') return <Property />;
-  if (route === 'e') return <Workspace />;
-  if (route === 'f') return <Playful />;
-  if (route === 'g') return <Minimal />;
-  return <Landing />;
+  if (route.kind === 'app') return <EditorialApp />;
+  if (route.kind === 'landing') return <Landing />;
+  if (route.letter === 'a') return <Cartographic />;
+  if (route.letter === 'b') return <Editorial />;
+  if (route.letter === 'c') return <Developer />;
+  if (route.letter === 'd') return <Property />;
+  if (route.letter === 'e') return <Workspace />;
+  if (route.letter === 'f') return <Playful />;
+  return <Minimal />;
 }
 
 type CardSpec = {
@@ -46,21 +55,21 @@ type CardSpec = {
 
 const TRANSCRIPT_REGISTERS: CardSpec[] = [
   {
-    hash: '#/a',
+    hash: '#/prototypes/a',
     letter: 'A',
     title: 'Kartografisk',
     desc: 'Offentlig-sektor-verktøy. Kartverket / SSB-uttrykk. Karttegn-legender, kapiteler, dempet blå.',
     appeal: 'Treffer: PM og domeneanmelder.',
   },
   {
-    hash: '#/b',
+    hash: '#/prototypes/b',
     letter: 'B',
     title: 'Redaksjonell',
     desc: 'NYT Upshot, FT data-fortelling, Stripe Press. Antikva-prosa, fotnotekilder, sporing som sluttnoter.',
-    appeal: 'Treffer: lederen.',
+    appeal: 'Treffer: lederen. — valgt for v1.',
   },
   {
-    hash: '#/c',
+    hash: '#/prototypes/c',
     letter: 'C',
     title: 'Utviklerverktøy',
     desc: 'Linear / Vercel / Anthropic-konsoll. Mørkt tema, tett JSON, ⌘K-palett.',
@@ -70,14 +79,14 @@ const TRANSCRIPT_REGISTERS: CardSpec[] = [
 
 const PRODUCT_REGISTERS: CardSpec[] = [
   {
-    hash: '#/d',
+    hash: '#/prototypes/d',
     letter: 'D',
     title: 'B2C-eiendomsside',
     desc: 'Finn.no / Hemnet / Zillow. Eiendommen er helten; agenten fyller seksjoner automatisk og driver en «spør om eiendommen»-panel.',
     appeal: 'Treffer: forbrukere, og PM som ser for seg lansering til sluttbrukere.',
   },
   {
-    hash: '#/e',
+    hash: '#/prototypes/e',
     letter: 'E',
     title: 'B2B-arbeidsflate',
     desc: 'Linear / Stripe / Notion / proptech-aktsomhetsverktøy. Sidemeny + eiendomshode + levende dataceller + spør-panel + aktivitetslogg.',
@@ -87,14 +96,14 @@ const PRODUCT_REGISTERS: CardSpec[] = [
 
 const PLACE_FINDING_REGISTERS: CardSpec[] = [
   {
-    hash: '#/f',
+    hash: '#/prototypes/f',
     letter: 'F',
     title: 'Lekent, bildedrevet',
     desc: 'Airbnb / Hemnet / Apartamento. Riso-palett, bento-hero med bilde-plassholdere, tematiske spørsmålsgrupper i fem farger. Bygd for når bildene kommer.',
     appeal: 'Treffer: boligsøkere; PM som ser for seg et B2C-merke.',
   },
   {
-    hash: '#/g',
+    hash: '#/prototypes/g',
     letter: 'G',
     title: 'Minimalistisk, adresse-først',
     desc: 'Google-hjemmesiden / Vipps. Ett stort adressefelt, ett rolig kart, en hårfin liste med grupperte spørsmål. Bygd for at live Kartverket-autocomplete og tile-kart skal kunne kobles på.',
@@ -118,6 +127,11 @@ function Landing() {
           produkt, i to innramminger (B2C-annonse, B2B-arbeidsflate). Den tredje retter seg mot folk
           som <em>leter etter et sted å bo</em>: en leken, bildedrevet flate og en stille,
           adresse-først-flate. Samme data, helt ulike fortellinger.
+        </p>
+        <p className="landing__lede">
+          <a href="#/" className="landing__backLink">
+            ← tilbake til den valgte v1 (register B, koblet til API)
+          </a>
         </p>
       </header>
 

@@ -65,6 +65,9 @@ export async function searchArticles(
   const res = await deps.fetch(url, {
     headers: { 'user-agent': WIKIPEDIA_USER_AGENT },
   });
+  if (!res.ok) {
+    throw new Error(`wikipedia responded ${res.status} ${res.statusText}`);
+  }
   const body = MediaWikiSearchResponse.parse(await res.json());
 
   const chunks: Chunk[] = body.query.search.map((hit, rank) => ({

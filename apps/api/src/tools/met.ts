@@ -73,6 +73,9 @@ export async function getWeather(
     return cached.forecast;
   }
 
+  if (!res.ok) {
+    throw new Error(`met responded ${res.status} ${res.statusText}`);
+  }
   const body = MetCompactResponse.parse(await res.json());
   const entry = MetFirstEntry.parse(body.properties.timeseries[0]);
 
