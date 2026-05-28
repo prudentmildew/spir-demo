@@ -240,17 +240,157 @@ The three prototypes hold *structure* constant (everything in §3–§7 is the s
 └────────────────────────────────────────────────────────────┘
 ```
 
+### Register D — *B2C property landing*
+
+> Added as part of the second prototype batch. Registers D and E shift the
+> framing: where A/B/C treat the agent *as* the product, D and E treat the agent
+> as the *engine* inside a product. They're listed under §8 alongside the
+> originals to preserve commensurability, but evaluating them is also a
+> judgement on framing, not only aesthetic.
+
+**Evocation:** Finn.no eiendom, Hemnet, Zillow. A rich consumer-facing property
+listing where the agent is a *feature of the page*, not the page itself.
+
+**Audience pull:** the consumer (and, by extension, the product lead who has to
+imagine "could we ship this to end users"). Signals "I understand what a
+property page looks like in market, and how the agent slots into one without
+swallowing it."
+
+**Typography.** Bricolage Grotesque (variable display) for the hero address,
+key-fact bigs, section titles, and answer headlines. Karla for body. IBM Plex
+Mono for matrikkel, lat/lon, and citation metadata.
+
+**Palette.** Warm cream background `#FBF7F0`, paper surface `#FFFFFF`, deep
+warm-ink body `#1B1410`. Primary accent: confident coral `#E85D4A` for kickers,
+CTAs, active chips. Grounded state in sage `#5E8A6B`; refusal in warm slate
+`#5C5050`.
+
+**Density.** Airy. Generous whitespace, soft shadows, 16–24px border radii. The
+page reads top-to-bottom as hero → facts → ask → auto-sections → coordinates.
+
+**Distinctive choices.** Gradient-stand-in "hero photo" explicitly labelled "no
+public photo · open-data demo" so the placeholder reads as intentional restraint.
+Auto-loaded sections stagger in with shimmer skeletons (600ms / 1.4s / 2.2s).
+The refusal renders as an honest *in-page* answer card with a slate left border
+and a blockquote of the verbatim reason — not as a hero moment.
+
+### Register E — *B2B workspace dashboard*
+
+**Evocation:** Linear, Stripe Atlas, Notion database view, internal proptech
+due-diligence tooling. A multi-cell workspace where the agent is one of several
+data lenses on a property file.
+
+**Audience pull:** the proptech engineer-and-PM tandem looking at "could we
+embed this in our existing workspace product?". Signals "I understand internal
+tooling patterns and how the agent integrates as a workhorse, not as the
+showpiece."
+
+**Typography.** Geist Sans for chrome. Geist Mono for crumbs, tool names,
+citation tags, IDs, timestamps. Tight tracking, slightly condensed.
+
+**Palette.** Near-white background `#F8F9FB`, pure-white surface, hairline
+borders `#E4E6EB`. Deep charcoal body `#1A1A24`. Accent: a serious emerald
+`#0E7C6F` (signals trust + real estate without overlapping the cooler blue of
+register C). Status pills emerald / amber / slate. No saturated colour anywhere
+— light-mode SaaS restraint.
+
+**Density.** Dense. Hairline dividers between rows. Card padding ~18px. Cell
+labels in tiny uppercase. The page reads as a status surface.
+
+**Distinctive choices.** Three live data cells in the Overview tab, each
+populated by an agent scenario and rendered with a domain-appropriate visual: a
+sparkline trend for population, a sun-and-cloud glyph for weather, a 4-tile
+mini-grid for the area profile. Each cell carries a small "by SSB / by MET / by
+Wikipedia" source tag and a measured `Nms` latency stamp. Sidebar shows the
+agent's *operational* state: `124 routing plans`, `9 refusals logged`, `source
+health · all ok`. The activity log at the bottom puts refusals on equal footing
+with resolutions.
+
+### Register F — *Playful, image-forward (consumer search)*
+
+> Added as part of the third prototype batch. Registers F and G share the
+> *agent-in-product* framing with D/E, but explicitly target **people looking
+> for a place to live**. Both prototypes also expand the prompt library from
+> six items to ~15 grouped into five themes, each themed by the
+> source/API it draws from — making the future-API expansion path visible
+> in the demo itself.
+
+**Evocation:** Airbnb's modern card grids, Hemnet's photo-forward listings, the
+playful tile work of Apartamento, MUBI's mosaic posters, riso-print zines. A
+home-finding surface that leans on colour, image-shaped tiles, and personality
+rather than data density.
+
+**Audience pull:** end users browsing for a place to live, and the PM
+imagining "could we ship this to a B2C market with a warm consumer brand?".
+Signals "I understand that the discovery surface matters as much as the data,
+and I can hold the agent inside an image-forward product without making it the
+centrepiece."
+
+**Typography.** Fraunces (variable serif, SOFT + WONK axes) for hero address,
+group titles, and answer headlines. Inter for body. IBM Plex Mono for source/API
+tags.
+
+**Palette.** Riso accents on warm cream `#FBF5E9`. Five named tints — coral
+`#FF5B50`, mint `#1EA688`, cobalt `#2A4AD8`, lemon `#F7C948`, plum `#7C3A8E` —
+one per prompt group so the eye scans the section by colour.
+
+**Density.** Generous. Big serif at the top, big chunky tiles below.
+
+**Distinctive choices.** Bento-grid hero with image-placeholder tiles, each
+rendered as a chunky cross-hatched colour panel with a mono "no public photo ·
+open-data demo" label so the placeholder reads as intentional restraint.
+**Five themed prompt groups** (Området / Folkene / Bygningen / Klima & vær /
+Tilkomst), each named by the API(s) it draws from. ~15 prompts total — ~7
+wired to existing fixtures, the rest tagged with a small mono badge naming the
+future source (`SSB · table 07459`, `NILU`, `Entur`, `Riksantikvaren`, …). The
+future-source badges make the expansion path obvious in the demo itself. The
+refusal carries a rotated italic "ærlig avslag" stamp — the honest-refusal
+moment rendered as a charming flourish.
+
+### Register G — *Minimal address-first (consumer search)*
+
+**Evocation:** Google's homepage, Linear's splash, Vipps' address flow,
+brutalist-minimal SaaS landings. Strip everything until only the address input
+and the map remain.
+
+**Audience pull:** reviewers who suspect the way to ship this to consumers is
+to give them one input and get out of the way. Signals "I can hold the line on
+simplicity and trust the user — and I've designed the expansion path so adding
+sources won't break the calm."
+
+**Typography.** A single typeface: Inter at varied sizes (64px hero input,
+24px answer headlines, 14.5px row text, 10.5px mono labels). ui-monospace for
+source/API tags. No serif anywhere.
+
+**Palette.** Off-white paper `#FAFAF8`, ink `#14141A`, hairline rules `#E7E5DD`.
+One accent: cobalt `#2A4AD8` for the active address underline, the map pin, and
+source links. No other colour on the page.
+
+**Density.** Sparse at the top (one centred input on the viewport), dense at
+the bottom (a hairline-ruled two-column grid of grouped prompts).
+
+**Distinctive choices.** Address input as the hero, pre-filled with the seeded
+address, underline turning cobalt on focus. A small mono `SENERE` (later)
+label below flags that live Kartverket autocomplete is the next slot to fill.
+A quiet single static SVG map — coastline, road grid, park block, one pin —
+paving the route to a real tile map (MapLibre + Kartverket WMTS) in v1 without
+needing a vendor today. The same expanded **15-prompt library** as F, presented
+as a hairline-ruled two-column grid (group head left, prompts right) with
+future-source pills on coming-soon rows. Refusal renders in the same answer
+slot with an ink `Ærlig avslag` label and a slim ink-bordered "ikke grunnet"
+tick — calm and on-equal-footing, not alarmed.
+
 ---
 
 ## 9. Prototype plan
 
-For each of the three registers above:
+For each of the registers above:
 
-1. A standalone Vite + React route or branch implementing the full Plan→Run→Answer experience for *one* canonical scenario each — but the canonical scenario is the same across all three: the visitor lands, the property is pre-resolved, they click the **Who owns this property?** rail item, see the refusal, and click **What's the population?**, see the grounded answer.
-2. No real API in the prototype — each prototype ships with a single recorded `QueryResponse` JSON for each of the two scenarios. The prototype is the *render* problem; the API integration is the same in all three and not what we're choosing between.
+1. A standalone Vite + React route implementing the canonical scenario set. For A/B/C, the canonical scenario is the **Who owns this property?** refusal and the **What's the population?** grounded answer. For D/E/F/G, those two are still in scope, plus the weather, neighbourhood, and both-sources fixtures so the product surfaces feel populated. F and G additionally surface a ~15-prompt **extended rail** (`apps/web/src/shared/extended-rail.ts`) grouped into five themes (Området / Folkene / Bygningen / Klima / Tilkomst) — each prompt either mapped to an existing fixture or tagged with the future source that would wire it in.
+2. No real API in the prototype — each prototype reads from the shared fixtures in `apps/web/src/shared/fixtures.ts` (5 canned `QueryResponse`s: `refusal`, `population`, `weather`, `neighborhood`, `both`). The prototype is the *render* problem; API integration is the same across all seven and not what we're choosing between.
 3. A `register.md` file inside each prototype directory that quotes the relevant section of §8 verbatim. The prototype must conform.
 
-We then look at the three side-by-side and pick. The winner becomes the basis for v1 wiring (§7). The other two are deleted.
+We then look at the seven side-by-side and pick. The winner becomes the basis for v1 wiring (§7). The losing prototypes are deleted. Picking between A/B/C and D/E/F/G is a *framing* choice as much as an aesthetic one (agent-is-product vs agent-in-product), and that decision should be made consciously.
 
 ---
 
