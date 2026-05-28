@@ -8,7 +8,7 @@ This sits in deliberate tension with the router being language-agnostic (see CON
 
 **Why not match the question's language?** The audience is a Norwegian proptech team. The demo's distinguishing properties — honest refusal, grounded contract — read more credibly in the audience's working language. Matching the question's language would mean the rail's English items still produce English answers, defeating the change.
 
-**Why not translate arXiv abstracts?** Per [ADR-0003](./0003-every-claim-carries-a-citation.md), every claim must be faithful to its citation. arXiv abstracts are quoted verbatim in English inside a Norwegian frame (`Relevant forskning: «<title>» — <text>`) so the citation remains an exact reproduction of the source. Translating would insert an unverified rendition between source and claim.
+**Why not translate quoted web passages?** Per [ADR-0003](./0003-every-claim-carries-a-citation.md), every claim must be faithful to its citation. A retrieved passage's `cited_text` is quoted verbatim — in whatever language the source is in — inside a Norwegian frame (`Fra «<title>»: <text>`, see [ADR-0010](./0010-single-web-search-retriever.md)) so the citation remains an exact reproduction of the source. Translating would insert an unverified rendition between source and claim.
 
 **Surface of the change.** Only the `answer` string and `plan.outOfScope.reason`. The `trace`, `plan.steps`, `citations`, and all field names remain technical English — they are part of the API contract consumed by the demo's debug UI, not user-facing prose.
 

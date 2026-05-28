@@ -29,7 +29,7 @@ A wrapper around a structured source (Kartverket, SSB, MET) that the agent invok
 _Avoid_: function, action, skill
 
 **retriever**:
-A wrapper around an unstructured source (Wikipedia, arXiv) that returns citable text chunks. Retrievers are *searched and cited*, never queried as structured data.
+A wrapper around an unstructured source (web search) that returns citable text chunks. Retrievers are *searched and cited*, never queried as structured data. A chunk's `text` is always a verbatim passage from the cited source, never a synthesis across sources — that is what keeps a retriever-backed claim **grounded**.
 _Avoid_: rag source, knowledge base
 
 **grounded**:
@@ -63,8 +63,8 @@ _Avoid_: refusal, unsupported, unknown
 >
 > **Dev:** What if they ask "what municipality is it in?"
 >
-> **Domain expert:** Once you have the *matrikkel*, you have the *knr* — that *is* the *kommunenr*. Answer it from the tool result directly, with the Kartverket call as the *citation*. Don't reach for Wikipedia for something a structured lookup already knows.
+> **Domain expert:** Once you have the *matrikkel*, you have the *knr* — that *is* the *kommunenr*. Answer it from the tool result directly, with the Kartverket call as the *citation*. Don't reach for the web retriever for something a structured lookup already knows.
 >
 > **Dev:** And "what's the area like?"
 >
-> **Domain expert:** Mixed. Numbers (population, age distribution) come from SSB, joined on *kommunenr* — that's a *tool*. Character of the neighbourhood, history — that's a *retriever* over Wikipedia, with citations to specific articles. The agent has to decide which parts of the question are structured and which aren't; the *trace* should show that split.
+> **Domain expert:** Mixed. Numbers (population, age distribution) come from SSB, joined on *kommunenr* — that's a *tool*. Character of the neighbourhood, history — that's a *retriever* over web search, with citations to the specific sources quoted. The agent has to decide which parts of the question are structured and which aren't; the *trace* should show that split.
