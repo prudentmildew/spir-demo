@@ -1,0 +1,3 @@
+# No framework; the deterministic shell is hand-rolled
+
+We considered Mastra and rejected it. The orchestrator, request validation, citation enforcement, trace assembly, and evals harness are built from primitives: `node:http`, Zod (for schemas and tool inputs), and the Vercel AI SDK *only* for the model call and tool-calling loop. The scaffold's teaching points — deterministic shell around a probabilistic core, the tools-vs-retrievers split, every claim carries a citation — *are* what a framework would implement for us; building them ourselves is the point. This also satisfies the project's minimum-runtime-dependencies constraint.

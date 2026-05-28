@@ -1,0 +1,3 @@
+# Evals run as a separate CLI, never through the test runner
+
+`node:test` covers deterministic code: orchestrator gates, trace assembly, citation enforcement, schema validation, source-adapter contracts. The evals harness is a plain `src/evals/run.ts` script that scores retrieval and answer faithfulness against a golden set and writes a JSON report under `evals/runs/<timestamp>.json`. It is never wired into CI as a pass/fail gate. Conflating the two either flakes CI when model output naturally wobbles, or forces thresholds so wide the harness silently stops being load-bearing. Tests assert; evals track trends. Keep them separate runnables.

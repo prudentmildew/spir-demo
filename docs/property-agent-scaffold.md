@@ -107,27 +107,24 @@ Adapter notes worth encoding as you build:
 
 ## 6. Domain dictionary (ubiquitous language)
 
-One meaning per term, shared by code, the API, and the agent's prompts. Extend as you go.
-
-- **matrikkel** — the property's national key: `knr` (kommune), `gnr` (gård), `bnr` (bruk), `snr` (seksjon, optional). The thing everything is keyed on.
-- **kommunenr** — 4-digit municipality code; the join key between address and statistics.
-- **hjemmelshaver** — registered owner. (Not available in this open demo; named so the agent knows the gap.)
-- **heftelse / servitutt** — encumbrance / easement. Also out of scope here; authoritative, never inferred in the real system.
-- **representasjonspunkt** — the coordinate point representing an address (lat/lon from Kartverket).
-
-The agent should *inherit* these terms, not invent synonyms. Ambiguity here is where multi-source joins break.
+Lives in [`CONTEXT.md`](../CONTEXT.md) at the repo root. Add new terms there as they're resolved during development; do not duplicate them in this document. The agent should *inherit* these terms, not invent synonyms — ambiguity here is where multi-source joins break.
 
 ---
 
-## 7. Key decisions (starting positions, not locked)
+## 7. Key decisions
 
-Treat these as draft ADRs — revise with reasons.
+Each decision below is recorded as a single-paragraph ADR under [`adr/`](./adr/). Revise by superseding the ADR, not by editing the original.
 
-1. **Entity resolution runs first, always.** No statistics or retrieval until an address resolves to a single confident match. Ambiguous or zero matches → ask for clarification, don't guess. A wrong match produces a confident answer about the *wrong* property — the most dangerous failure.
-2. **Structured = tool, unstructured = retriever.** Never RAG over data that can be queried. Keeps authoritative facts exact and citable.
-3. **Every claim carries a citation.** Synthesis may only use retrieved/returned content. No grounding → `grounded: false` and an honest "I couldn't find that."
-4. **Freshness over snapshots.** Structured sources fetched live (short TTL cache at most). Only unstructured text is indexed/cached aggressively.
-5. **Human-in-the-loop gates: none needed here.** The demo is read-only over open data, so nothing is irreversible. Document *where* the gates would sit in the real Infoland version — anything billable, binding, or authoritative — so the pattern is visible even when unused.
+1. **Entity resolution runs first, always** — [ADR-0001](./adr/0001-entity-resolution-runs-first.md). No statistics or retrieval until an address resolves to a single confident match. A wrong match produces a confident answer about the *wrong* property — the most dangerous failure.
+2. **Structured = tool, unstructured = retriever** — [ADR-0002](./adr/0002-structured-is-tool-unstructured-is-retriever.md). Never RAG over data that can be queried.
+3. **Every claim carries a citation** — [ADR-0003](./adr/0003-every-claim-carries-a-citation.md). No grounding → `grounded: false` and an honest "I couldn't find that."
+4. **Freshness over snapshots** — [ADR-0004](./adr/0004-freshness-over-snapshots.md). Structured sources fetched live (short TTL cache at most); only unstructured text is indexed/cached aggressively.
+5. **Human-in-the-loop gates: none needed here.** The demo is read-only over open data, so nothing is irreversible. Document *where* the gates would sit in the real Infoland version — anything billable, binding, or authoritative — so the pattern is visible even when unused. (Not ADR-worthy: no real trade-off, fully reversible.)
+
+Decisions made during scaffolding (see [`adr/`](./adr/)):
+
+- **No framework; the deterministic shell is hand-rolled** — [ADR-0005](./adr/0005-no-framework-hand-rolled-shell.md). Rejected Mastra.
+- **Evals run as a separate CLI, never through the test runner** — [ADR-0006](./adr/0006-evals-separate-from-tests.md).
 
 ---
 
@@ -142,21 +139,36 @@ The harness matters more than the agent. Without it you are guessing.
 
 ---
 
-## 9. Suggested layout
+## 9. Layout
 
-Stack-agnostic; the boundaries matter more than the folder names.
+pnpm workspace. The API lives in `apps/api` from day one; a future `apps/web` will be added when the demo frontend lands. Shared code stays inside `apps/api/src/` until the frontend actually proves a sharing surface (Shape 1 — see [grilling decisions](#7-key-decisions)).
 
 ```
-/api          REST layer — validation, response shaping
-/orchestrator the loop: resolve → route → ground → answer
-/tools        structured adapters: kartverket, ssb, met
-/retrievers   unstructured: wikipedia, arxiv
-/grounding    citation enforcement, output-schema validation
-/evals        golden set + runner
-/domain       dictionary, shared types
-PRD.md        this document
-/adr          one file per decision as they harden
+pnpm-workspace.yaml
+package.json
+CLAUDE.md                       project-level agent instructions
+CONTEXT.md                      domain dictionary (glossary)
+docs/
+  property-agent-scaffold.md    this document
+  adr/                          one file per decision as they harden
+  agents/                       agent-skill configuration
+apps/
+  api/
+    package.json
+    src/
+      index.ts                  node:http entry
+      api/                      request validation, response shaping
+      orchestrator/             the loop: resolve → route → ground → answer
+      tools/                    structured adapters: kartverket, ssb, met
+      retrievers/               unstructured: wikipedia, arxiv
+      grounding/                citation enforcement, output-schema validation
+      domain/                   shared Zod schemas (Match, Chunk, /query contract)
+      evals/                    golden set + runner CLI
+    test/                       node:test specs
+# apps/web/ added in a later session
 ```
+
+The boundaries matter more than the folder names — modules are split along the abstraction lines from §3, not by mechanical concern.
 
 ---
 
@@ -175,11 +187,16 @@ Resist adding a source before the evals can judge it. The cheap step is wiring a
 
 ---
 
-## 11. Open questions — decide before going wide
+## 11. Open questions
 
-These change the design and shouldn't be guessed:
+Updated as decisions are made.
 
-- **Consumer:** internal tool or external-facing? Drives whether auth/rate-limiting belong in the demo at all.
-- **Model provider/model:** left open by design. Pick per the routing/synthesis needs; test the choice against the evals rather than by feel.
-- **Retrieval depth:** keyword-search-and-cite for the demo, or a real embedding index? Start with the former; let evals tell you when to upgrade.
-- **How far to take HITL:** likely none for a read-only demo — confirm, and note where it would go in the real system.
+- **Consumer:** internal tool or external-facing? Drives whether auth/rate-limiting belong in the demo at all. — *Still open.*
+- **Model provider/model:** *decided* — Anthropic via the Vercel AI SDK; Claude Haiku 4.5 for the dev loop, Sonnet 4.6 for eval baselines. Re-test once the eval harness exists; provider abstraction makes a re-run on OpenAI/Google a config change.
+- **Retrieval depth:** keyword-search-and-cite for the demo, or a real embedding index? — *Position unchanged: keyword first. Let evals tell you when to upgrade.*
+- **How far to take HITL:** *decided* — none for this demo. The pattern is documented in §7.5 so the gates' real-system locations stay visible.
+
+Still to grill before going wide (see open tasks):
+
+- **Source adapter conventions** — MET `User-Agent`, freshness/caching policy per source, error shape, where the adapter→tool wrapping layer lives.
+- **Trace shape and storage** — in-memory only or persisted; granularity; relation to the AI SDK's built-in step loop.
