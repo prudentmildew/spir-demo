@@ -18,6 +18,7 @@ export const RoutingStep = z.discriminatedUnion('tool', [
 
 export const RoutingPlan = z.object({
   steps: z.array(RoutingStep),
+  outOfScope: z.object({ reason: z.string().min(1) }).optional(),
 });
 
 export type GetMunicipalityStatsStep = z.infer<typeof GetMunicipalityStatsStep>;

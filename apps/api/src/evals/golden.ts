@@ -49,7 +49,7 @@ export const goldenSet: GoldenCase[] = [
   },
   {
     id: 'both-sources',
-    query: 'Tell me about the property and the area around it.',
+    query: 'How many people live here, and what is the area like?',
     address: 'Karl Johans gate 5, Oslo',
     expect: {
       matchKommunenr: '0301',
@@ -62,6 +62,76 @@ export const goldenSet: GoldenCase[] = [
           /about oslo/i,
         ],
         citationSources: ['kartverket', 'ssb', 'wikipedia'],
+      },
+    },
+  },
+  {
+    id: 'identity-only',
+    query: 'What is the matrikkel number for this property?',
+    address: 'Karl Johans gate 5, Oslo',
+    expect: {
+      matchKommunenr: '0301',
+      grounded: true,
+      routing: { tools: [] },
+      answer: {
+        mustContain: ['kommune 0301'],
+        citationSources: ['kartverket'],
+      },
+    },
+  },
+  {
+    id: 'stats-non-oslo',
+    query: 'How many people live there?',
+    address: 'Torgallmenningen 8, Bergen',
+    expect: {
+      matchKommunenr: '4601',
+      grounded: true,
+      routing: { tools: ['get_municipality_stats'] },
+      answer: {
+        mustContain: ['kommune 4601', /Population in 20\d{2} was \d{5,7}/],
+        citationSources: ['kartverket', 'ssb'],
+      },
+    },
+  },
+  {
+    id: 'norwegian-query',
+    query: 'Hvor mange bor det her?',
+    address: 'Karl Johans gate 5, Oslo',
+    expect: {
+      matchKommunenr: '0301',
+      grounded: true,
+      routing: { tools: ['get_municipality_stats'] },
+      answer: {
+        mustContain: ['kommune 0301', /Population in 20\d{2} was \d{5,7}/],
+        citationSources: ['kartverket', 'ssb'],
+      },
+    },
+  },
+  {
+    id: 'wrong-tool-trap',
+    query: 'When was this building built?',
+    address: 'Karl Johans gate 5, Oslo',
+    expect: {
+      matchKommunenr: '0301',
+      grounded: false,
+      routing: { tools: [] },
+      answer: {
+        mustContain: [/don't have|can't|cannot|no .* data|unable|out of scope|not available/i],
+        citationSources: ['kartverket'],
+      },
+    },
+  },
+  {
+    id: 'ambiguous-multimatch',
+    query: 'Tell me about this address.',
+    address: 'Storgata 1',
+    expect: {
+      matchKommunenr: null,
+      grounded: false,
+      routing: { tools: [] },
+      answer: {
+        mustContain: [/candidates|disambiguate/i],
+        citationSources: [],
       },
     },
   },

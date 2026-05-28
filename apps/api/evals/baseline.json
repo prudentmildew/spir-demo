@@ -1,0 +1,1281 @@
+{
+  "timestamp": "2026-05-28T08:23:17.932Z",
+  "summary": {
+    "totalCases": 9,
+    "retrievalScore": 9,
+    "answerScore": 9
+  },
+  "cases": [
+    {
+      "id": "stats-only",
+      "query": "How many people live there?",
+      "address": "Karl Johans gate 5, Oslo",
+      "retrievalPass": true,
+      "retrievalDetails": {
+        "expected": [
+          "get_municipality_stats"
+        ],
+        "actual": [
+          "get_municipality_stats"
+        ]
+      },
+      "answerPass": true,
+      "answerDetails": {
+        "grounded": {
+          "expected": true,
+          "actual": true
+        },
+        "missingPatterns": [],
+        "missingCitationSources": []
+      },
+      "response": {
+        "answer": "Karl Johans gate 5 is in kommune 0301. Population in 2026 was 728714.",
+        "grounded": true,
+        "citations": [
+          {
+            "source": "kartverket",
+            "url": "https://ws.geonorge.no/adresser/v1/sok",
+            "field": "kommunenr"
+          },
+          {
+            "source": "ssb",
+            "url": "https://data.ssb.no/api/pxwebapi/v2-beta/tables/11342/data",
+            "field": "population"
+          }
+        ],
+        "trace": [
+          {
+            "step": "resolve_address",
+            "tool": "kartverket",
+            "input": {
+              "query": "Karl Johans gate 5, Oslo"
+            },
+            "ok": true,
+            "output": {
+              "address": "Karl Johans gate 5",
+              "kommunenr": "0301",
+              "kommunenavn": "OSLO",
+              "matrikkel": {
+                "knr": "0301",
+                "gnr": 207,
+                "bnr": 84
+              },
+              "lat": 59.91158209734912,
+              "lon": 10.748198567519214
+            }
+          },
+          {
+            "step": "get_municipality_stats",
+            "tool": "ssb",
+            "input": {
+              "kommunenr": "0301",
+              "metric": "population"
+            },
+            "ok": true,
+            "output": [
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2007,
+                "value": 548617
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2008,
+                "value": 560484
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2009,
+                "value": 575475
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2010,
+                "value": 586860
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2011,
+                "value": 599230
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2012,
+                "value": 613285
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2013,
+                "value": 623966
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2014,
+                "value": 634463
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2015,
+                "value": 647676
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2016,
+                "value": 658390
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2017,
+                "value": 666759
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2018,
+                "value": 673469
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2019,
+                "value": 681071
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2020,
+                "value": 693494
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2021,
+                "value": 697010
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2022,
+                "value": 699827
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2023,
+                "value": 709037
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2024,
+                "value": 717710
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2025,
+                "value": 724290
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2026,
+                "value": 728714
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "story-only",
+      "query": "What is the area like?",
+      "address": "Karl Johans gate 5, Oslo",
+      "retrievalPass": true,
+      "retrievalDetails": {
+        "expected": [
+          "search_articles"
+        ],
+        "actual": [
+          "search_articles"
+        ]
+      },
+      "answerPass": true,
+      "answerDetails": {
+        "grounded": {
+          "expected": true,
+          "actual": true
+        },
+        "missingPatterns": [],
+        "missingCitationSources": []
+      },
+      "response": {
+        "answer": "Karl Johans gate 5 is in kommune 0301. About OSLO: Oslo (tidligere Christiania eller Kristiania) er Norges hovedstad, minste fylke i areal og mest folkerike by. Fylket og bykommunen ligger i det sentrale",
+        "grounded": true,
+        "citations": [
+          {
+            "source": "kartverket",
+            "url": "https://ws.geonorge.no/adresser/v1/sok",
+            "field": "kommunenr"
+          },
+          {
+            "source": "wikipedia",
+            "url": "https://no.wikipedia.org/wiki/Oslo",
+            "field": "Oslo"
+          }
+        ],
+        "trace": [
+          {
+            "step": "resolve_address",
+            "tool": "kartverket",
+            "input": {
+              "query": "Karl Johans gate 5, Oslo"
+            },
+            "ok": true,
+            "output": {
+              "address": "Karl Johans gate 5",
+              "kommunenr": "0301",
+              "kommunenavn": "OSLO",
+              "matrikkel": {
+                "knr": "0301",
+                "gnr": 207,
+                "bnr": 84
+              },
+              "lat": 59.91158209734912,
+              "lon": 10.748198567519214
+            }
+          },
+          {
+            "step": "search_articles",
+            "tool": "wikipedia",
+            "input": {
+              "query": "Oslo"
+            },
+            "ok": true,
+            "output": [
+              {
+                "text": "Oslo (tidligere Christiania eller Kristiania) er Norges hovedstad, minste fylke i areal og mest folkerike by. Fylket og bykommunen ligger i det sentrale",
+                "title": "Oslo",
+                "url": "https://no.wikipedia.org/wiki/Oslo",
+                "score": 1
+              },
+              {
+                "text": "KFUM-kameratene Oslo, ofte kun omtalt som KFUM Oslo eller Kåffa, er et idrettslag fra Oslo. Klubben er tilknyttet både Norges fotballforbund, Norges Friidrettsforbund",
+                "title": "KFUM-Kameratene Oslo",
+                "url": "https://no.wikipedia.org/wiki/KFUM-Kameratene_Oslo",
+                "score": 0.5
+              },
+              {
+                "text": "Stang (født 1955) er en norsk advokat og politiker (H). Han var ordfører i Oslo fra 2007 til 2015 og statssekretær for Norges innvandrings- og integreringsminister",
+                "title": "Fabian Stang",
+                "url": "https://no.wikipedia.org/wiki/Fabian_Stang",
+                "score": 0.3333333333333333
+              },
+              {
+                "text": "Gamle Oslo er en administrativ bydel i Oslo med 58 671 innbyggere (1. januar 2020) og et areal på 7,5 km²[trenger referanse]. Bydel Gamle Oslo består av",
+                "title": "Bydel Gamle Oslo",
+                "url": "https://no.wikipedia.org/wiki/Bydel_Gamle_Oslo",
+                "score": 0.25
+              },
+              {
+                "text": "Oslo lufthavn (IATA: OSL, ICAO: ENGM) er en internasjonal lufthavn som ligger på Gardermoen på grensen mellom Nannestad og Ullensaker kommuner i Akershus",
+                "title": "Oslo lufthavn (Gardermoen)",
+                "url": "https://no.wikipedia.org/wiki/Oslo_lufthavn_%28Gardermoen%29",
+                "score": 0.2
+              },
+              {
+                "text": "Oslo tingrett er en førsteinstansdomstol med en rettskrets som dekker Oslo kommune. Tingretten holder til i Oslo tinghus, midt i Oslo sentrum. Etter sammenslåingen",
+                "title": "Oslo tingrett",
+                "url": "https://no.wikipedia.org/wiki/Oslo_tingrett",
+                "score": 0.16666666666666666
+              },
+              {
+                "text": "vedtak. Oslo bystyre 2023–2027 Oslo bystyre 2019–2023 Oslo bystyre 2015–2019 Oslo bystyre 2011–2015 Oslo bystyre 2007–2011 Oslo bystyre 2003–2007 Oslo bystyre",
+                "title": "Oslo bystyre",
+                "url": "https://no.wikipedia.org/wiki/Oslo_bystyre",
+                "score": 0.14285714285714285
+              },
+              {
+                "text": "Døden på Oslo S er et norsk kriminaldrama og ungdomsfilm fra 1990 regissert av Eva Isaksen. Filmen er basert på Ingvar Ambjørnsens bok Døden på Oslo S fra",
+                "title": "Døden på Oslo S (film)",
+                "url": "https://no.wikipedia.org/wiki/D%C3%B8den_p%C3%A5_Oslo_S_%28film%29",
+                "score": 0.125
+              },
+              {
+                "text": "Oslo universitetssykehus, Ullevål (ofte omtalt som Ullevål sykehus eller bare Ullevål) er den delen av Oslo universitetssykehus som ligger på sykehusområdet",
+                "title": "Oslo universitetssykehus, Ullevål",
+                "url": "https://no.wikipedia.org/wiki/Oslo_universitetssykehus%2C_Ullev%C3%A5l",
+                "score": 0.1111111111111111
+              },
+              {
+                "text": "Oslo Bryteklubb (OBK) er en bryteklubb på Kalbakken i Oslo, stiftet 11. februar 1947. Siden 1983 har OBK hatt treningslokaler i Grorud Samfunnshus på Kalbakken",
+                "title": "Oslo Bryteklubb",
+                "url": "https://no.wikipedia.org/wiki/Oslo_Bryteklubb",
+                "score": 0.1
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "both-sources",
+      "query": "How many people live here, and what is the area like?",
+      "address": "Karl Johans gate 5, Oslo",
+      "retrievalPass": true,
+      "retrievalDetails": {
+        "expected": [
+          "get_municipality_stats",
+          "search_articles"
+        ],
+        "actual": [
+          "get_municipality_stats",
+          "search_articles"
+        ]
+      },
+      "answerPass": true,
+      "answerDetails": {
+        "grounded": {
+          "expected": true,
+          "actual": true
+        },
+        "missingPatterns": [],
+        "missingCitationSources": []
+      },
+      "response": {
+        "answer": "Karl Johans gate 5 is in kommune 0301. Population in 2026 was 728714. About OSLO: Oslo (tidligere Christiania eller Kristiania) er Norges hovedstad, minste fylke i areal og mest folkerike by. Fylket og bykommunen ligger i det sentrale",
+        "grounded": true,
+        "citations": [
+          {
+            "source": "kartverket",
+            "url": "https://ws.geonorge.no/adresser/v1/sok",
+            "field": "kommunenr"
+          },
+          {
+            "source": "ssb",
+            "url": "https://data.ssb.no/api/pxwebapi/v2-beta/tables/11342/data",
+            "field": "population"
+          },
+          {
+            "source": "wikipedia",
+            "url": "https://no.wikipedia.org/wiki/Oslo",
+            "field": "Oslo"
+          }
+        ],
+        "trace": [
+          {
+            "step": "resolve_address",
+            "tool": "kartverket",
+            "input": {
+              "query": "Karl Johans gate 5, Oslo"
+            },
+            "ok": true,
+            "output": {
+              "address": "Karl Johans gate 5",
+              "kommunenr": "0301",
+              "kommunenavn": "OSLO",
+              "matrikkel": {
+                "knr": "0301",
+                "gnr": 207,
+                "bnr": 84
+              },
+              "lat": 59.91158209734912,
+              "lon": 10.748198567519214
+            }
+          },
+          {
+            "step": "get_municipality_stats",
+            "tool": "ssb",
+            "input": {
+              "kommunenr": "0301",
+              "metric": "population"
+            },
+            "ok": true,
+            "output": [
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2007,
+                "value": 548617
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2008,
+                "value": 560484
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2009,
+                "value": 575475
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2010,
+                "value": 586860
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2011,
+                "value": 599230
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2012,
+                "value": 613285
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2013,
+                "value": 623966
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2014,
+                "value": 634463
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2015,
+                "value": 647676
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2016,
+                "value": 658390
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2017,
+                "value": 666759
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2018,
+                "value": 673469
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2019,
+                "value": 681071
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2020,
+                "value": 693494
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2021,
+                "value": 697010
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2022,
+                "value": 699827
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2023,
+                "value": 709037
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2024,
+                "value": 717710
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2025,
+                "value": 724290
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2026,
+                "value": 728714
+              }
+            ]
+          },
+          {
+            "step": "search_articles",
+            "tool": "wikipedia",
+            "input": {
+              "query": "Oslo"
+            },
+            "ok": true,
+            "output": [
+              {
+                "text": "Oslo (tidligere Christiania eller Kristiania) er Norges hovedstad, minste fylke i areal og mest folkerike by. Fylket og bykommunen ligger i det sentrale",
+                "title": "Oslo",
+                "url": "https://no.wikipedia.org/wiki/Oslo",
+                "score": 1
+              },
+              {
+                "text": "KFUM-kameratene Oslo, ofte kun omtalt som KFUM Oslo eller Kåffa, er et idrettslag fra Oslo. Klubben er tilknyttet både Norges fotballforbund, Norges Friidrettsforbund",
+                "title": "KFUM-Kameratene Oslo",
+                "url": "https://no.wikipedia.org/wiki/KFUM-Kameratene_Oslo",
+                "score": 0.5
+              },
+              {
+                "text": "Stang (født 1955) er en norsk advokat og politiker (H). Han var ordfører i Oslo fra 2007 til 2015 og statssekretær for Norges innvandrings- og integreringsminister",
+                "title": "Fabian Stang",
+                "url": "https://no.wikipedia.org/wiki/Fabian_Stang",
+                "score": 0.3333333333333333
+              },
+              {
+                "text": "Gamle Oslo er en administrativ bydel i Oslo med 58 671 innbyggere (1. januar 2020) og et areal på 7,5 km²[trenger referanse]. Bydel Gamle Oslo består av",
+                "title": "Bydel Gamle Oslo",
+                "url": "https://no.wikipedia.org/wiki/Bydel_Gamle_Oslo",
+                "score": 0.25
+              },
+              {
+                "text": "Oslo lufthavn (IATA: OSL, ICAO: ENGM) er en internasjonal lufthavn som ligger på Gardermoen på grensen mellom Nannestad og Ullensaker kommuner i Akershus",
+                "title": "Oslo lufthavn (Gardermoen)",
+                "url": "https://no.wikipedia.org/wiki/Oslo_lufthavn_%28Gardermoen%29",
+                "score": 0.2
+              },
+              {
+                "text": "vedtak. Oslo bystyre 2023–2027 Oslo bystyre 2019–2023 Oslo bystyre 2015–2019 Oslo bystyre 2011–2015 Oslo bystyre 2007–2011 Oslo bystyre 2003–2007 Oslo bystyre",
+                "title": "Oslo bystyre",
+                "url": "https://no.wikipedia.org/wiki/Oslo_bystyre",
+                "score": 0.16666666666666666
+              },
+              {
+                "text": "Døden på Oslo S er et norsk kriminaldrama og ungdomsfilm fra 1990 regissert av Eva Isaksen. Filmen er basert på Ingvar Ambjørnsens bok Døden på Oslo S fra",
+                "title": "Døden på Oslo S (film)",
+                "url": "https://no.wikipedia.org/wiki/D%C3%B8den_p%C3%A5_Oslo_S_%28film%29",
+                "score": 0.14285714285714285
+              },
+              {
+                "text": "Oslo universitetssykehus, Ullevål (ofte omtalt som Ullevål sykehus eller bare Ullevål) er den delen av Oslo universitetssykehus som ligger på sykehusområdet",
+                "title": "Oslo universitetssykehus, Ullevål",
+                "url": "https://no.wikipedia.org/wiki/Oslo_universitetssykehus%2C_Ullev%C3%A5l",
+                "score": 0.125
+              },
+              {
+                "text": "Oslo Bryteklubb (OBK) er en bryteklubb på Kalbakken i Oslo, stiftet 11. februar 1947. Siden 1983 har OBK hatt treningslokaler i Grorud Samfunnshus på Kalbakken",
+                "title": "Oslo Bryteklubb",
+                "url": "https://no.wikipedia.org/wiki/Oslo_Bryteklubb",
+                "score": 0.1111111111111111
+              },
+              {
+                "text": "OverOslo er en musikkfestival som arrangeres på Grefsenkollen i Oslo i juni hvert år siden 2011, og har gradvis vokst til å bli en av Oslos og landets",
+                "title": "OverOslo",
+                "url": "https://no.wikipedia.org/wiki/OverOslo",
+                "score": 0.1
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "identity-only",
+      "query": "What is the matrikkel number for this property?",
+      "address": "Karl Johans gate 5, Oslo",
+      "retrievalPass": true,
+      "retrievalDetails": {
+        "expected": [],
+        "actual": []
+      },
+      "answerPass": true,
+      "answerDetails": {
+        "grounded": {
+          "expected": true,
+          "actual": true
+        },
+        "missingPatterns": [],
+        "missingCitationSources": []
+      },
+      "response": {
+        "answer": "Karl Johans gate 5 is in kommune 0301.",
+        "grounded": true,
+        "citations": [
+          {
+            "source": "kartverket",
+            "url": "https://ws.geonorge.no/adresser/v1/sok",
+            "field": "kommunenr"
+          }
+        ],
+        "trace": [
+          {
+            "step": "resolve_address",
+            "tool": "kartverket",
+            "input": {
+              "query": "Karl Johans gate 5, Oslo"
+            },
+            "ok": true,
+            "output": {
+              "address": "Karl Johans gate 5",
+              "kommunenr": "0301",
+              "kommunenavn": "OSLO",
+              "matrikkel": {
+                "knr": "0301",
+                "gnr": 207,
+                "bnr": 84
+              },
+              "lat": 59.91158209734912,
+              "lon": 10.748198567519214
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "stats-non-oslo",
+      "query": "How many people live there?",
+      "address": "Torgallmenningen 8, Bergen",
+      "retrievalPass": true,
+      "retrievalDetails": {
+        "expected": [
+          "get_municipality_stats"
+        ],
+        "actual": [
+          "get_municipality_stats"
+        ]
+      },
+      "answerPass": true,
+      "answerDetails": {
+        "grounded": {
+          "expected": true,
+          "actual": true
+        },
+        "missingPatterns": [],
+        "missingCitationSources": []
+      },
+      "response": {
+        "answer": "Torgallmenningen 8 is in kommune 4601. Population in 2026 was 294860.",
+        "grounded": true,
+        "citations": [
+          {
+            "source": "kartverket",
+            "url": "https://ws.geonorge.no/adresser/v1/sok",
+            "field": "kommunenr"
+          },
+          {
+            "source": "ssb",
+            "url": "https://data.ssb.no/api/pxwebapi/v2-beta/tables/11342/data",
+            "field": "population"
+          }
+        ],
+        "trace": [
+          {
+            "step": "resolve_address",
+            "tool": "kartverket",
+            "input": {
+              "query": "Torgallmenningen 8, Bergen"
+            },
+            "ok": true,
+            "output": {
+              "address": "Torgallmenningen 8",
+              "kommunenr": "4601",
+              "kommunenavn": "BERGEN",
+              "matrikkel": {
+                "knr": "4601",
+                "gnr": 166,
+                "bnr": 633
+              },
+              "lat": 60.39292215068295,
+              "lon": 5.324642484791957
+            }
+          },
+          {
+            "step": "get_municipality_stats",
+            "tool": "ssb",
+            "input": {
+              "kommunenr": "4601",
+              "metric": "population"
+            },
+            "ok": true,
+            "output": [
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2007,
+                "value": 0
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2008,
+                "value": 0
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2009,
+                "value": 0
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2010,
+                "value": 0
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2011,
+                "value": 0
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2012,
+                "value": 0
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2013,
+                "value": 0
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2014,
+                "value": 0
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2015,
+                "value": 0
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2016,
+                "value": 0
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2017,
+                "value": 0
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2018,
+                "value": 0
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2019,
+                "value": 0
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2020,
+                "value": 283929
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2021,
+                "value": 285601
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2022,
+                "value": 286930
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2023,
+                "value": 289330
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2024,
+                "value": 291940
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2025,
+                "value": 293709
+              },
+              {
+                "metric": "population",
+                "kommunenr": "4601",
+                "year": 2026,
+                "value": 294860
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "norwegian-query",
+      "query": "Hvor mange bor det her?",
+      "address": "Karl Johans gate 5, Oslo",
+      "retrievalPass": true,
+      "retrievalDetails": {
+        "expected": [
+          "get_municipality_stats"
+        ],
+        "actual": [
+          "get_municipality_stats"
+        ]
+      },
+      "answerPass": true,
+      "answerDetails": {
+        "grounded": {
+          "expected": true,
+          "actual": true
+        },
+        "missingPatterns": [],
+        "missingCitationSources": []
+      },
+      "response": {
+        "answer": "Karl Johans gate 5 is in kommune 0301. Population in 2026 was 728714.",
+        "grounded": true,
+        "citations": [
+          {
+            "source": "kartverket",
+            "url": "https://ws.geonorge.no/adresser/v1/sok",
+            "field": "kommunenr"
+          },
+          {
+            "source": "ssb",
+            "url": "https://data.ssb.no/api/pxwebapi/v2-beta/tables/11342/data",
+            "field": "population"
+          }
+        ],
+        "trace": [
+          {
+            "step": "resolve_address",
+            "tool": "kartverket",
+            "input": {
+              "query": "Karl Johans gate 5, Oslo"
+            },
+            "ok": true,
+            "output": {
+              "address": "Karl Johans gate 5",
+              "kommunenr": "0301",
+              "kommunenavn": "OSLO",
+              "matrikkel": {
+                "knr": "0301",
+                "gnr": 207,
+                "bnr": 84
+              },
+              "lat": 59.91158209734912,
+              "lon": 10.748198567519214
+            }
+          },
+          {
+            "step": "get_municipality_stats",
+            "tool": "ssb",
+            "input": {
+              "kommunenr": "0301",
+              "metric": "population"
+            },
+            "ok": true,
+            "output": [
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2007,
+                "value": 548617
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2008,
+                "value": 560484
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2009,
+                "value": 575475
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2010,
+                "value": 586860
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2011,
+                "value": 599230
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2012,
+                "value": 613285
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2013,
+                "value": 623966
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2014,
+                "value": 634463
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2015,
+                "value": 647676
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2016,
+                "value": 658390
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2017,
+                "value": 666759
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2018,
+                "value": 673469
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2019,
+                "value": 681071
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2020,
+                "value": 693494
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2021,
+                "value": 697010
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2022,
+                "value": 699827
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2023,
+                "value": 709037
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2024,
+                "value": 717710
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2025,
+                "value": 724290
+              },
+              {
+                "metric": "population",
+                "kommunenr": "0301",
+                "year": 2026,
+                "value": 728714
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "wrong-tool-trap",
+      "query": "When was this building built?",
+      "address": "Karl Johans gate 5, Oslo",
+      "retrievalPass": true,
+      "retrievalDetails": {
+        "expected": [],
+        "actual": []
+      },
+      "answerPass": true,
+      "answerDetails": {
+        "grounded": {
+          "expected": false,
+          "actual": false
+        },
+        "missingPatterns": [],
+        "missingCitationSources": []
+      },
+      "response": {
+        "answer": "Karl Johans gate 5 is in kommune 0301, but Building-level construction year is not available from municipality demographics or area character sources.",
+        "grounded": false,
+        "citations": [
+          {
+            "source": "kartverket",
+            "url": "https://ws.geonorge.no/adresser/v1/sok",
+            "field": "kommunenr"
+          }
+        ],
+        "trace": [
+          {
+            "step": "resolve_address",
+            "tool": "kartverket",
+            "input": {
+              "query": "Karl Johans gate 5, Oslo"
+            },
+            "ok": true,
+            "output": {
+              "address": "Karl Johans gate 5",
+              "kommunenr": "0301",
+              "kommunenavn": "OSLO",
+              "matrikkel": {
+                "knr": "0301",
+                "gnr": 207,
+                "bnr": 84
+              },
+              "lat": 59.91158209734912,
+              "lon": 10.748198567519214
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ambiguous-multimatch",
+      "query": "Tell me about this address.",
+      "address": "Storgata 1",
+      "retrievalPass": true,
+      "retrievalDetails": {
+        "expected": [],
+        "actual": []
+      },
+      "answerPass": true,
+      "answerDetails": {
+        "grounded": {
+          "expected": false,
+          "actual": false
+        },
+        "missingPatterns": [],
+        "missingCitationSources": []
+      },
+      "response": {
+        "answer": "Address \"Storgata 1\" matched 10 candidates — please disambiguate.",
+        "grounded": false,
+        "citations": [],
+        "trace": [
+          {
+            "step": "resolve_address",
+            "tool": "kartverket",
+            "input": {
+              "query": "Storgata 1"
+            },
+            "ok": true,
+            "output": [
+              {
+                "address": "Storgata 1",
+                "kommunenr": "4005",
+                "kommunenavn": "NOTODDEN",
+                "matrikkel": {
+                  "knr": "4005",
+                  "gnr": 244,
+                  "bnr": 651
+                },
+                "lat": 59.556176197848814,
+                "lon": 9.254195697042965
+              },
+              {
+                "address": "Storgata 1",
+                "kommunenr": "1508",
+                "kommunenavn": "ÅLESUND",
+                "matrikkel": {
+                  "knr": "1508",
+                  "gnr": 201,
+                  "bnr": 652
+                },
+                "lat": 62.47172007723551,
+                "lon": 6.159906562588832
+              },
+              {
+                "address": "Storgata 1",
+                "kommunenr": "3101",
+                "kommunenavn": "HALDEN",
+                "matrikkel": {
+                  "knr": "3101",
+                  "gnr": 160,
+                  "bnr": 535
+                },
+                "lat": 59.11996241143388,
+                "lon": 11.387285758402708
+              },
+              {
+                "address": "Storgata 1",
+                "kommunenr": "3303",
+                "kommunenavn": "KONGSBERG",
+                "matrikkel": {
+                  "knr": "3303",
+                  "gnr": 7825,
+                  "bnr": 1
+                },
+                "lat": 59.66816037385866,
+                "lon": 9.649670253500991
+              },
+              {
+                "address": "Storgata 1",
+                "kommunenr": "5503",
+                "kommunenavn": "HARSTAD",
+                "matrikkel": {
+                  "knr": "5503",
+                  "gnr": 57,
+                  "bnr": 935
+                },
+                "lat": 68.79915432048602,
+                "lon": 16.544011165684864
+              },
+              {
+                "address": "Storgata 1",
+                "kommunenr": "3103",
+                "kommunenavn": "MOSS",
+                "matrikkel": {
+                  "knr": "3103",
+                  "gnr": 2,
+                  "bnr": 2004
+                },
+                "lat": 59.43408685085707,
+                "lon": 10.655692003471781
+              },
+              {
+                "address": "Storgata 1",
+                "kommunenr": "3405",
+                "kommunenavn": "LILLEHAMMER",
+                "matrikkel": {
+                  "knr": "3405",
+                  "gnr": 62,
+                  "bnr": 26
+                },
+                "lat": 61.107551416784226,
+                "lon": 10.472494029524857
+              },
+              {
+                "address": "Storgata 1",
+                "kommunenr": "1539",
+                "kommunenavn": "RAUMA",
+                "matrikkel": {
+                  "knr": "1539",
+                  "gnr": 27,
+                  "bnr": 237
+                },
+                "lat": 62.568575586002915,
+                "lon": 7.686026279231953
+              },
+              {
+                "address": "Storgata 1",
+                "kommunenr": "3437",
+                "kommunenavn": "SEL",
+                "matrikkel": {
+                  "knr": "3437",
+                  "gnr": 220,
+                  "bnr": 21
+                },
+                "lat": 61.77071232613653,
+                "lon": 9.543837539777257
+              },
+              {
+                "address": "Storgata 1",
+                "kommunenr": "1860",
+                "kommunenavn": "VESTVÅGØY",
+                "matrikkel": {
+                  "knr": "1860",
+                  "gnr": 18,
+                  "bnr": 70
+                },
+                "lat": 68.14985210395788,
+                "lon": 13.61902274479999
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "bad-address",
+      "query": "Tell me about this place.",
+      "address": "Nonexistent vei 99999, Nowhere",
+      "retrievalPass": true,
+      "retrievalDetails": {
+        "expected": [],
+        "actual": []
+      },
+      "answerPass": true,
+      "answerDetails": {
+        "grounded": {
+          "expected": false,
+          "actual": false
+        },
+        "missingPatterns": [],
+        "missingCitationSources": []
+      },
+      "response": {
+        "answer": "No match for address \"Nonexistent vei 99999, Nowhere\". Please refine and try again.",
+        "grounded": false,
+        "citations": [],
+        "trace": [
+          {
+            "step": "resolve_address",
+            "tool": "kartverket",
+            "input": {
+              "query": "Nonexistent vei 99999, Nowhere"
+            },
+            "ok": true,
+            "output": []
+          }
+        ]
+      }
+    }
+  ]
+}

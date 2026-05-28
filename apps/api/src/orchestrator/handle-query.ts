@@ -75,6 +75,15 @@ export async function handleQuery(
 
   const plan = await deps.route(input.query, match);
 
+  if (plan.outOfScope !== undefined) {
+    return {
+      answer: `${match.address} is in kommune ${match.kommunenr}, but ${plan.outOfScope.reason}.`,
+      grounded: false,
+      citations: [kartverketCitation],
+      trace: [resolveStep],
+    };
+  }
+
   const trace: Trace = [resolveStep];
   const citations: Citation[] = [kartverketCitation];
 

@@ -422,6 +422,31 @@ test('route is empty: neither tool called, kartverket-only locator answer, groun
   assert.equal(response.trace[0]?.step, 'resolve_address');
 });
 
+test('route returns out_of_scope: no tools called, grounded:false, answer mentions the reason, kartverket citation only', async () => {
+  const resolveAddress = async () => [sampleMatch];
+  const route: Route = async () => ({
+    steps: [],
+    outOfScope: { reason: 'building-level history is not in this agent’s sources' },
+  });
+
+  const response = await handleQuery(
+    { query: 'When was this building built?', address: 'Karl Johans gate 5, Oslo' },
+    {
+      resolveAddress,
+      getMunicipalityStats: neverCalledStats,
+      searchArticles: neverCalledArticles,
+      route,
+    },
+  );
+
+  assert.equal(response.grounded, false);
+  assert.match(response.answer, /building-level history is not in this agent’s sources/);
+  assert.equal(response.citations.length, 1);
+  assert.equal(response.citations[0]?.source, 'kartverket');
+  assert.equal(response.trace.length, 1);
+  assert.equal(response.trace[0]?.step, 'resolve_address');
+});
+
 test('route omits get_municipality_stats: getMunicipalityStats not called, no ssb citation or trace step', async () => {
   const resolveAddress = async () => [sampleMatch];
   const chunk: Chunk = {
