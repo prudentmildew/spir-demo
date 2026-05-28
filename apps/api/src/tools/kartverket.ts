@@ -24,6 +24,9 @@ export async function resolveAddress(
   const url = new URL(KARTVERKET_SOK_URL);
   url.searchParams.set('sok', query);
   const res = await deps.fetch(url);
+  if (!res.ok) {
+    throw new Error(`kartverket responded ${res.status} ${res.statusText}`);
+  }
   const body = KartverketResponse.parse(await res.json());
 
   return body.adresser.map((a) => ({

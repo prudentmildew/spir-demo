@@ -383,6 +383,76 @@ test('single match + SSB degraded (empty) + Wikipedia returns chunk: degraded SS
   assert.deepEqual(response.trace[2]?.output, [chunk]);
 });
 
+test('response surfaces the routing plan returned by deps.route (enables offline replay)', async () => {
+  const resolveAddress = async () => [sampleMatch];
+  const plan = {
+    steps: [
+      { tool: 'get_municipality_stats' as const, metric: 'population' as const },
+      { tool: 'search_articles' as const, query: 'Oslo' },
+    ],
+  };
+  const route: Route = async () => plan;
+  const getMunicipalityStats = async () => [
+    { metric: 'population' as const, kommunenr: '0301', year: 2024, value: 717710 },
+  ];
+  const searchArticles = async () => [];
+
+  const response = await handleQuery(
+    { query: 'q', address: 'Karl Johans gate 5, Oslo' },
+    {
+      resolveAddress,
+      getMunicipalityStats,
+      searchArticles,
+      getWeather: neverCalledWeather,
+      searchPapers: neverCalledPapers,
+      route,
+    },
+  );
+
+  assert.deepEqual(response.plan, plan);
+});
+
+test('response.plan carries outOfScope when the router refused the question', async () => {
+  const resolveAddress = async () => [sampleMatch];
+  const plan = {
+    steps: [],
+    outOfScope: { reason: 'building-level history is not in this agent’s sources' },
+  };
+  const route: Route = async () => plan;
+
+  const response = await handleQuery(
+    { query: 'When was this building built?', address: 'Karl Johans gate 5, Oslo' },
+    {
+      resolveAddress,
+      getMunicipalityStats: neverCalledStats,
+      searchArticles: neverCalledArticles,
+      getWeather: neverCalledWeather,
+      searchPapers: neverCalledPapers,
+      route,
+    },
+  );
+
+  assert.deepEqual(response.plan, plan);
+});
+
+test('response.plan is undefined when routing was not reached (zero matches)', async () => {
+  const resolveAddress = async () => [];
+
+  const response = await handleQuery(
+    { query: 'q', address: 'Nonexistent vei 999, Nowhere' },
+    {
+      resolveAddress,
+      getMunicipalityStats: neverCalledStats,
+      searchArticles: neverCalledArticles,
+      getWeather: neverCalledWeather,
+      searchPapers: neverCalledPapers,
+      route: neverCalledRoute,
+    },
+  );
+
+  assert.equal(response.plan, undefined);
+});
+
 test('route picks search_articles with a focused query distinct from kommunenavn', async () => {
   const resolveAddress = async () => [sampleMatch];
   const chunk: Chunk = {

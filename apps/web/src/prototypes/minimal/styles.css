@@ -1,0 +1,574 @@
+/* Register G — Minimal address-first.
+   One typeface, one accent. Big address input, quiet SVG map, hairline-ruled
+   single-column grouped prompt rail. Built so geocoding and a live map can
+   slot in without disturbing the hierarchy. */
+
+.min {
+  --paper: #fafaf8;
+  --ink: #14141a;
+  --ink-soft: #45454e;
+  --ink-mute: #8a8a92;
+  --ink-faint: #c2c2c8;
+  --rule: #e7e5dd;
+  --rule-soft: #f0eee7;
+  --accent: #2a4ad8;
+  --accent-soft: #d8dff7;
+
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+  padding-bottom: 96px;
+}
+
+/* ── brand strip ──────────────────────────────────────── */
+
+.min__brand {
+  padding: 22px 40px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.min__brandLink {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.min__brandMark {
+  color: var(--accent);
+  font-size: 16px;
+}
+
+.min__brandWord {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.min__brandFaint {
+  font-size: 11px;
+  color: var(--ink-mute);
+  letter-spacing: 0.04em;
+}
+
+/* ── address hero ────────────────────────────────────── */
+
+.min__hero {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 96px 40px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.min__heroLabel {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 600;
+  margin-bottom: 28px;
+}
+
+.min__heroInputWrap {
+  position: relative;
+  width: 100%;
+  max-width: 880px;
+}
+
+.min__heroInput {
+  width: 100%;
+  font-family: inherit;
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  outline: none;
+  text-align: center;
+  padding: 14px 0;
+  line-height: 1.1;
+}
+
+.min__heroInput::placeholder {
+  color: var(--ink-faint);
+}
+
+.min__heroUnderline {
+  display: block;
+  height: 2px;
+  background: var(--ink);
+  margin: 4px auto 0;
+  width: 80%;
+  max-width: 720px;
+  transition: width 200ms ease;
+}
+
+.min__heroInput:focus + .min__heroUnderline,
+.min__heroInputWrap:focus-within .min__heroUnderline {
+  background: var(--accent);
+  width: 96%;
+}
+
+.min__heroHint {
+  margin-top: 26px;
+  font-size: 13px;
+  color: var(--ink-mute);
+  letter-spacing: -0.005em;
+}
+
+.min__heroHintLabel {
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--rule-soft);
+  margin-right: 8px;
+}
+
+/* ── map panel ───────────────────────────────────────── */
+
+.min__map {
+  max-width: 960px;
+  margin: 24px auto 0;
+  padding: 0 40px;
+}
+
+.min__mapSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+}
+
+.min__mapMeta {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+
+.min__mapMetaLabel {
+  font-weight: 600;
+}
+
+.min__mapMetaValue {
+  color: var(--ink);
+}
+
+/* ── prompts ─────────────────────────────────────────── */
+
+.min__prompts {
+  max-width: 880px;
+  margin: 88px auto 0;
+  padding: 0 40px;
+}
+
+.min__promptsHead {
+  margin-bottom: 32px;
+}
+
+.min__promptsTitle {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+}
+
+.min__promptsLede {
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin: 0;
+  max-width: 64ch;
+  line-height: 1.6;
+}
+
+.min__groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid var(--ink);
+}
+
+.min__group {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 32px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.min__groupHead {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-self: start;
+}
+
+.min__groupTitle {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+.min__groupSub {
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+
+.min__groupSrc {
+  margin-top: 8px;
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
+.min__groupItems {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.min__row {
+  border-top: 1px solid var(--rule-soft);
+}
+
+.min__row:first-child {
+  border-top: none;
+}
+
+.min__rowBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-family: inherit;
+  font-size: 14.5px;
+  color: var(--ink);
+  cursor: pointer;
+  letter-spacing: -0.005em;
+  font-weight: 500;
+  transition: color 160ms ease;
+}
+
+.min__rowBtn:hover:not(:disabled) {
+  color: var(--accent);
+}
+
+.min__rowBtn--future {
+  color: var(--ink-mute);
+  cursor: not-allowed;
+}
+
+.min__rowBtn--pending {
+  color: var(--accent);
+}
+
+.min__rowLabel {
+  flex: 1;
+}
+
+.min__rowFlag {
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  background: var(--rule-soft);
+  color: var(--ink-soft);
+  border-radius: 4px;
+}
+
+.min__rowFuture {
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--ink-mute);
+  padding: 2px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+}
+
+.min__rowArrow {
+  color: var(--ink-faint);
+  font-size: 14px;
+  transition:
+    transform 160ms ease,
+    color 160ms ease;
+}
+
+.min__rowBtn:hover:not(:disabled) .min__rowArrow {
+  transform: translateX(3px);
+  color: var(--accent);
+}
+
+.min__rowPending {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.min__rowPending span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: minPulse 1.1s ease-in-out infinite;
+}
+
+.min__rowPending span:nth-child(2) {
+  animation-delay: 150ms;
+}
+.min__rowPending span:nth-child(3) {
+  animation-delay: 300ms;
+}
+
+@keyframes minPulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ── answer ──────────────────────────────────────────── */
+
+.min__answer {
+  margin-top: 40px;
+  padding: 28px 0 0;
+  border-top: 2px solid var(--ink);
+}
+
+.min__answer--loading {
+  border-top-color: var(--ink-faint);
+}
+
+.min__answer--refusal {
+  border-top-color: var(--ink);
+}
+
+.min__answerLabel {
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 12px;
+}
+
+.min__answerLabel--refusal {
+  color: var(--ink);
+}
+
+.min__answerQ {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 18px;
+}
+
+.min__answerBody {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink);
+  margin: 0 0 24px;
+  max-width: 64ch;
+}
+
+.min__answerSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0 0 24px;
+  border-top: 1px solid var(--rule);
+}
+
+.min__stepRow {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 16px;
+  padding: 10px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.min__stepRow dt {
+  color: var(--accent);
+  font-weight: 600;
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+}
+
+.min__stepRow dd {
+  color: var(--ink-soft);
+  margin: 0;
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 11.5px;
+}
+
+.min__refusalLead {
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink);
+  max-width: 42ch;
+  margin: 0 0 18px;
+  font-weight: 500;
+}
+
+.min__refusalQuote {
+  margin: 0 0 18px;
+  padding: 12px 0 12px 18px;
+  border-left: 2px solid var(--ink);
+  font-size: 15px;
+  color: var(--ink-soft);
+  font-style: italic;
+  max-width: 60ch;
+}
+
+.min__refusalNeed {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--rule);
+  margin-bottom: 18px;
+}
+
+.min__refusalLabel {
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.min__refusalSrc {
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.min__answerFoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+}
+
+.min__chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.min__chip {
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 3px 9px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+}
+
+.min__chip:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.min__answerMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.min__tick {
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 4px;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.min__tick--no {
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+}
+
+.min__time {
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  color: var(--ink-mute);
+}
+
+/* ── colophon ────────────────────────────────────────── */
+
+.min__colophon {
+  max-width: 880px;
+  margin: 80px auto 0;
+  padding: 24px 40px 0;
+  border-top: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  font-size: 12px;
+  color: var(--ink-mute);
+  line-height: 1.6;
+}
+
+.min__colophonRight {
+  text-align: right;
+}
+
+.min__colophonLabel {
+  display: inline-block;
+  margin-right: 6px;
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+}

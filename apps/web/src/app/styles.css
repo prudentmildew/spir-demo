@@ -1,0 +1,204 @@
+/* v1 additions on top of prototypes/editorial/styles.css.
+   Keeps the ed__ prefix so the editorial visual language extends cleanly. */
+
+/* ── edit-address inline input ─────────────────────────── */
+
+.ed__addressEdit {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  border: 1px solid var(--ink);
+  background: var(--paper-2);
+}
+
+.ed__addressEditKicker {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 500;
+}
+
+.ed__addressEditRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.ed__addressEditInput {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--ink);
+  font-family: "Source Serif 4", "Source Serif Pro", Georgia, serif;
+  font-size: 20px;
+  color: var(--ink);
+  padding: 6px 0;
+  outline: none;
+}
+
+.ed__addressEditInput::placeholder {
+  color: var(--ink-mute);
+  font-style: italic;
+}
+
+.ed__addressEditBtn {
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 500;
+}
+
+.ed__addressEditBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.ed__addressEditCancel {
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  background: transparent;
+  padding: 8px 6px;
+}
+
+.ed__addressEditCancel:hover {
+  color: var(--ink);
+}
+
+/* ── property panel edge states (PRD §5.A) ─────────────── */
+
+.ed__resolveNote {
+  margin: 6px 0 18px;
+  padding: 14px 16px;
+  border-left: 3px solid var(--refused);
+  background: rgba(154, 126, 92, 0.07);
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  color: var(--ink-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ed__resolveNoteHead {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--refused);
+  font-weight: 500;
+}
+
+.ed__resolveNoteBody {
+  margin: 0;
+  font-family: "Source Serif 4", "Source Serif Pro", Georgia, serif;
+  font-size: 16px;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+.ed__resolveList {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ed__resolveList li {
+  border-top: 1px dotted var(--rule);
+}
+
+.ed__resolveList li:first-child {
+  border-top: none;
+}
+
+.ed__resolvePick {
+  width: 100%;
+  text-align: left;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  padding: 10px 0;
+  font-family: "Source Serif 4", "Source Serif Pro", Georgia, serif;
+  font-size: 15px;
+  color: var(--ink);
+  background: transparent;
+  transition: color 180ms ease;
+}
+
+.ed__resolvePick:hover {
+  color: var(--teal);
+}
+
+.ed__resolvePickKommune {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+
+/* ── network / HTTP error treatment ─────────────────────── */
+
+.ed__errorTurn {
+  border-left: 3px solid var(--refused);
+  padding: 8px 0 8px 28px;
+}
+
+.ed__errorKicker {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--refused);
+  font-weight: 500;
+  margin: 0 0 10px;
+}
+
+.ed__errorMsg {
+  margin: 0 0 10px;
+  font-size: 18px;
+  line-height: 1.5;
+  font-style: italic;
+  color: var(--ink);
+}
+
+.ed__errorDetail {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  color: var(--ink-mute);
+  margin: 0;
+}
+
+/* ── transcript meta header ─────────────────────────────── */
+
+.ed__transcriptMeta {
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin: 0 0 -40px;
+}
+
+/* ── rail edge buttons (functional) ─────────────────────── */
+
+.ed__railEdge:not(:disabled) {
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+
+.ed__railEdge:not(:disabled):hover {
+  color: var(--teal);
+}

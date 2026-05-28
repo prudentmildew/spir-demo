@@ -6,7 +6,9 @@
     "node": ">=24"
   },
   "scripts": {
-    "dev": "pnpm -r dev",
+    "dev": "pnpm dev:web && dev:api",
+    "dev:web": "pnpm --filter web dev",
+    "dev:api": "pnpm --filter api dev",
     "start": "pnpm --filter api start",
     "test": "pnpm -r --if-present test",
     "typecheck": "pnpm -r --if-present typecheck",

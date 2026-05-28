@@ -35,7 +35,18 @@ export async function handleQuery(
   },
 ): Promise<QueryResponse> {
   const query = input.address ?? input.query;
-  const matches = await deps.resolveAddress(query);
+  let matches: Match[];
+  try {
+    matches = await deps.resolveAddress(query);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return {
+      answer: `Address lookup is unavailable right now (${message}). Please try again.`,
+      grounded: false,
+      citations: [],
+      trace: [{ step: 'resolve_address', tool: 'kartverket', input: { query }, ok: false }],
+    };
+  }
 
   if (matches.length === 0) {
     return {
@@ -79,7 +90,18 @@ export async function handleQuery(
     field: 'kommunenr',
   };
 
-  const plan = await deps.route(input.query, match);
+  let plan: RoutingPlan;
+  try {
+    plan = await deps.route(input.query, match);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return {
+      answer: `${match.address} is in kommune ${match.kommunenr}, but the router is unavailable right now (${message}).`,
+      grounded: false,
+      citations: [kartverketCitation],
+      trace: [resolveStep],
+    };
+  }
 
   if (plan.outOfScope !== undefined) {
     return {
@@ -87,6 +109,7 @@ export async function handleQuery(
       grounded: false,
       citations: [kartverketCitation],
       trace: [resolveStep],
+      plan,
     };
   }
 
@@ -235,5 +258,6 @@ export async function handleQuery(
     grounded,
     citations,
     trace,
+    plan,
   };
 }

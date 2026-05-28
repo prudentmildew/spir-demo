@@ -35,22 +35,51 @@ const MetFirstEntry = z.object({
   }),
 });
 
+export type MetCacheEntry = {
+  forecast: Forecast;
+  lastModified: string;
+  expires: number;
+};
+export type MetCache = Map<string, MetCacheEntry>;
+export const createMetCache = (): MetCache => new Map();
+
 export async function getWeather(
   lat: number,
   lon: number,
-  deps: { fetch: typeof fetch },
+  deps: { fetch: typeof fetch; cache: MetCache; now?: () => number },
 ): Promise<Forecast> {
+  const now = deps.now ?? Date.now;
+  const key = `${lat},${lon}`;
+  const cached = deps.cache.get(key);
+  if (cached !== undefined && now() < cached.expires) {
+    return cached.forecast;
+  }
+
   const url = new URL(MET_LOCATIONFORECAST_URL);
   url.searchParams.set('lat', String(lat));
   url.searchParams.set('lon', String(lon));
 
-  const res = await deps.fetch(url, {
-    headers: { 'user-agent': MET_USER_AGENT },
-  });
+  const headers: Record<string, string> = { 'user-agent': MET_USER_AGENT };
+  if (cached !== undefined) {
+    headers['if-modified-since'] = cached.lastModified;
+  }
+  const res = await deps.fetch(url, { headers });
+
+  if (res.status === 304 && cached !== undefined) {
+    const expiresHeader = res.headers.get('expires');
+    if (expiresHeader !== null) {
+      deps.cache.set(key, { ...cached, expires: Date.parse(expiresHeader) });
+    }
+    return cached.forecast;
+  }
+
+  if (!res.ok) {
+    throw new Error(`met responded ${res.status} ${res.statusText}`);
+  }
   const body = MetCompactResponse.parse(await res.json());
   const entry = MetFirstEntry.parse(body.properties.timeseries[0]);
 
-  return {
+  const forecast: Forecast = {
     lat,
     lon,
     updatedAt: body.properties.meta.updated_at,
@@ -59,4 +88,16 @@ export async function getWeather(
     symbolCode: entry.data.next_6_hours.summary.symbol_code,
     precipitationMmNext6h: entry.data.next_6_hours.details.precipitation_amount,
   };
+
+  const lastModified = res.headers.get('last-modified');
+  const expiresHeader = res.headers.get('expires');
+  if (lastModified !== null && expiresHeader !== null) {
+    deps.cache.set(key, {
+      forecast,
+      lastModified,
+      expires: Date.parse(expiresHeader),
+    });
+  }
+
+  return forecast;
 }

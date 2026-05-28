@@ -14,7 +14,7 @@ import { makeRouter } from './orchestrator/router.ts';
 import { searchArticles as wikipediaSearchArticles } from './retrievers/wikipedia.ts';
 import { searchPapers as arxivSearchPapers } from './retrievers/arxiv.ts';
 import { resolveAddress as kartverketResolveAddress } from './tools/kartverket.ts';
-import { getWeather as metGetWeather } from './tools/met.ts';
+import { createMetCache, getWeather as metGetWeather } from './tools/met.ts';
 import { getMunicipalityStats as ssbGetMunicipalityStats } from './tools/ssb.ts';
 
 const PORT = Number(process.env.PORT ?? 3000);
@@ -28,7 +28,9 @@ const getMunicipalityStats: GetMunicipalityStats = (kommunenr, metric) =>
 const searchArticles: SearchArticles = (query) =>
   wikipediaSearchArticles(query, { fetch });
 
-const getWeather: GetWeather = (lat, lon) => metGetWeather(lat, lon, { fetch });
+const metCache = createMetCache();
+const getWeather: GetWeather = (lat, lon) =>
+  metGetWeather(lat, lon, { fetch, cache: metCache });
 
 const searchPapers: SearchPapers = (query) => arxivSearchPapers(query, { fetch });
 

@@ -8,7 +8,7 @@ import { makeRouter } from '../orchestrator/router.ts';
 import { searchArticles } from '../retrievers/wikipedia.ts';
 import { searchPapers } from '../retrievers/arxiv.ts';
 import { resolveAddress } from '../tools/kartverket.ts';
-import { getWeather } from '../tools/met.ts';
+import { createMetCache, getWeather } from '../tools/met.ts';
 import { getMunicipalityStats } from '../tools/ssb.ts';
 import { goldenSet, type GoldenCase } from './golden.ts';
 
@@ -78,12 +78,14 @@ async function main() {
   }
 
   const route: Route = makeRouter(anthropic('claude-haiku-4-5-20251001'));
+  const metCache = createMetCache();
   const deps = {
     resolveAddress: (q: string) => resolveAddress(q, { fetch }),
     getMunicipalityStats: (k: string, m: 'population') =>
       getMunicipalityStats(k, m, { fetch }),
     searchArticles: (q: string) => searchArticles(q, { fetch }),
-    getWeather: (lat: number, lon: number) => getWeather(lat, lon, { fetch }),
+    getWeather: (lat: number, lon: number) =>
+      getWeather(lat, lon, { fetch, cache: metCache }),
     searchPapers: (q: string) => searchPapers(q, { fetch }),
     route,
   };
