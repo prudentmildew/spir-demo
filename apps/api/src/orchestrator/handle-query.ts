@@ -1,4 +1,5 @@
 import type { Chunk } from '../domain/chunk.ts';
+import type { Forecast } from '../domain/forecast.ts';
 import type { Match } from '../domain/match.ts';
 import type { QueryRequest, QueryResponse } from '../domain/query.ts';
 import type { RoutingPlan } from '../domain/routing-plan.ts';
@@ -10,10 +11,13 @@ export type GetMunicipalityStats = (
   metric: 'population',
 ) => Promise<StatPoint[]>;
 export type SearchArticles = (query: string) => Promise<Chunk[]>;
+export type GetWeather = (lat: number, lon: number) => Promise<Forecast>;
+export type SearchPapers = (query: string) => Promise<Chunk[]>;
 export type Route = (query: string, match: Match) => Promise<RoutingPlan>;
 
 const KARTVERKET_URL = 'https://ws.geonorge.no/adresser/v1/sok';
 const SSB_URL = 'https://data.ssb.no/api/pxwebapi/v2-beta/tables/11342/data';
+const MET_URL = 'https://api.met.no/weatherapi/locationforecast/2.0/compact';
 
 type Trace = QueryResponse['trace'];
 type TraceStep = Trace[number];
@@ -25,6 +29,8 @@ export async function handleQuery(
     resolveAddress: ResolveAddress;
     getMunicipalityStats: GetMunicipalityStats;
     searchArticles: SearchArticles;
+    getWeather: GetWeather;
+    searchPapers: SearchPapers;
     route: Route;
   },
 ): Promise<QueryResponse> {
@@ -91,6 +97,10 @@ export async function handleQuery(
   let ssbLatest: StatPoint | null = null;
   let ssbDegraded = false;
   let wikiTopChunk: Chunk | null = null;
+  let metInvoked = false;
+  let forecast: Forecast | null = null;
+  let metDegraded = false;
+  let arxivTopChunk: Chunk | null = null;
 
   for (const step of plan.steps) {
     if (step.tool === 'get_municipality_stats') {
@@ -148,6 +158,42 @@ export async function handleQuery(
           ok: false,
         });
       }
+    } else if (step.tool === 'get_weather') {
+      metInvoked = true;
+      const metInput = { lat: match.lat, lon: match.lon };
+      try {
+        const f = await deps.getWeather(match.lat, match.lon);
+        trace.push({ step: 'get_weather', tool: 'met', input: metInput, ok: true, output: f });
+        forecast = f;
+        citations.push({ source: 'met', url: MET_URL, field: 'forecast' });
+      } catch {
+        metDegraded = true;
+        trace.push({ step: 'get_weather', tool: 'met', input: metInput, ok: false });
+      }
+    } else if (step.tool === 'search_papers') {
+      const arxivInput = { query: step.query };
+      try {
+        const chunks = await deps.searchPapers(step.query);
+        trace.push({
+          step: 'search_papers',
+          tool: 'arxiv',
+          input: arxivInput,
+          ok: true,
+          output: chunks,
+        });
+        const top = chunks[0];
+        if (top !== undefined) {
+          arxivTopChunk = top;
+          citations.push({ source: 'arxiv', url: top.url, field: top.title });
+        }
+      } catch {
+        trace.push({
+          step: 'search_papers',
+          tool: 'arxiv',
+          input: arxivInput,
+          ok: false,
+        });
+      }
     }
   }
 
@@ -169,6 +215,19 @@ export async function handleQuery(
 
   if (wikiTopChunk !== null) {
     sentences.push(`About ${match.kommunenavn}: ${wikiTopChunk.text}`);
+  }
+
+  if (metInvoked && forecast !== null) {
+    sentences.push(
+      `Current weather at the property: ${forecast.temperatureCelsius}°C, ${forecast.symbolCode}, ${forecast.precipitationMmNext6h} mm precipitation expected in the next 6 hours.`,
+    );
+  } else if (metInvoked && metDegraded) {
+    sentences.push(`Weather forecast wasn't available.`);
+    grounded = false;
+  }
+
+  if (arxivTopChunk !== null) {
+    sentences.push(`Relevant research: "${arxivTopChunk.title}" — ${arxivTopChunk.text}`);
   }
 
   return {

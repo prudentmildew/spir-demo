@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-05-28T08:23:17.932Z",
+  "timestamp": "2026-05-28T08:51:37.630Z",
   "summary": {
-    "totalCases": 9,
-    "retrievalScore": 9,
-    "answerScore": 9
+    "totalCases": 11,
+    "retrievalScore": 11,
+    "answerScore": 11
   },
   "cases": [
     {
@@ -260,7 +260,7 @@
             "step": "search_articles",
             "tool": "wikipedia",
             "input": {
-              "query": "Oslo"
+              "query": "OSLO"
             },
             "ok": true,
             "output": [
@@ -564,33 +564,33 @@
                 "score": 0.2
               },
               {
+                "text": "Oslo tingrett er en førsteinstansdomstol med en rettskrets som dekker Oslo kommune. Tingretten holder til i Oslo tinghus, midt i Oslo sentrum. Etter sammenslåingen",
+                "title": "Oslo tingrett",
+                "url": "https://no.wikipedia.org/wiki/Oslo_tingrett",
+                "score": 0.16666666666666666
+              },
+              {
                 "text": "vedtak. Oslo bystyre 2023–2027 Oslo bystyre 2019–2023 Oslo bystyre 2015–2019 Oslo bystyre 2011–2015 Oslo bystyre 2007–2011 Oslo bystyre 2003–2007 Oslo bystyre",
                 "title": "Oslo bystyre",
                 "url": "https://no.wikipedia.org/wiki/Oslo_bystyre",
-                "score": 0.16666666666666666
+                "score": 0.14285714285714285
               },
               {
                 "text": "Døden på Oslo S er et norsk kriminaldrama og ungdomsfilm fra 1990 regissert av Eva Isaksen. Filmen er basert på Ingvar Ambjørnsens bok Døden på Oslo S fra",
                 "title": "Døden på Oslo S (film)",
                 "url": "https://no.wikipedia.org/wiki/D%C3%B8den_p%C3%A5_Oslo_S_%28film%29",
-                "score": 0.14285714285714285
+                "score": 0.125
               },
               {
                 "text": "Oslo universitetssykehus, Ullevål (ofte omtalt som Ullevål sykehus eller bare Ullevål) er den delen av Oslo universitetssykehus som ligger på sykehusområdet",
                 "title": "Oslo universitetssykehus, Ullevål",
                 "url": "https://no.wikipedia.org/wiki/Oslo_universitetssykehus%2C_Ullev%C3%A5l",
-                "score": 0.125
+                "score": 0.1111111111111111
               },
               {
                 "text": "Oslo Bryteklubb (OBK) er en bryteklubb på Kalbakken i Oslo, stiftet 11. februar 1947. Siden 1983 har OBK hatt treningslokaler i Grorud Samfunnshus på Kalbakken",
                 "title": "Oslo Bryteklubb",
                 "url": "https://no.wikipedia.org/wiki/Oslo_Bryteklubb",
-                "score": 0.1111111111111111
-              },
-              {
-                "text": "OverOslo er en musikkfestival som arrangeres på Grefsenkollen i Oslo i juni hvert år siden 2011, og har gradvis vokst til å bli en av Oslos og landets",
-                "title": "OverOslo",
-                "url": "https://no.wikipedia.org/wiki/OverOslo",
                 "score": 0.1
               }
             ]
@@ -1035,6 +1035,186 @@
       }
     },
     {
+      "id": "weather-only",
+      "query": "What's the weather like at this address right now?",
+      "address": "Karl Johans gate 5, Oslo",
+      "retrievalPass": true,
+      "retrievalDetails": {
+        "expected": [
+          "get_weather"
+        ],
+        "actual": [
+          "get_weather"
+        ]
+      },
+      "answerPass": true,
+      "answerDetails": {
+        "grounded": {
+          "expected": true,
+          "actual": true
+        },
+        "missingPatterns": [],
+        "missingCitationSources": []
+      },
+      "response": {
+        "answer": "Karl Johans gate 5 is in kommune 0301. Current weather at the property: 13.8°C, clearsky_day, 0 mm precipitation expected in the next 6 hours.",
+        "grounded": true,
+        "citations": [
+          {
+            "source": "kartverket",
+            "url": "https://ws.geonorge.no/adresser/v1/sok",
+            "field": "kommunenr"
+          },
+          {
+            "source": "met",
+            "url": "https://api.met.no/weatherapi/locationforecast/2.0/compact",
+            "field": "forecast"
+          }
+        ],
+        "trace": [
+          {
+            "step": "resolve_address",
+            "tool": "kartverket",
+            "input": {
+              "query": "Karl Johans gate 5, Oslo"
+            },
+            "ok": true,
+            "output": {
+              "address": "Karl Johans gate 5",
+              "kommunenr": "0301",
+              "kommunenavn": "OSLO",
+              "matrikkel": {
+                "knr": "0301",
+                "gnr": 207,
+                "bnr": 84
+              },
+              "lat": 59.91158209734912,
+              "lon": 10.748198567519214
+            }
+          },
+          {
+            "step": "get_weather",
+            "tool": "met",
+            "input": {
+              "lat": 59.91158209734912,
+              "lon": 10.748198567519214
+            },
+            "ok": true,
+            "output": {
+              "lat": 59.91158209734912,
+              "lon": 10.748198567519214,
+              "updatedAt": "2026-05-28T08:28:21Z",
+              "time": "2026-05-28T08:00:00Z",
+              "temperatureCelsius": 13.8,
+              "symbolCode": "clearsky_day",
+              "precipitationMmNext6h": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "papers-only",
+      "query": "Are there academic research papers about Oslo housing markets?",
+      "address": "Karl Johans gate 5, Oslo",
+      "retrievalPass": true,
+      "retrievalDetails": {
+        "expected": [
+          "search_papers"
+        ],
+        "actual": [
+          "search_papers"
+        ]
+      },
+      "answerPass": true,
+      "answerDetails": {
+        "grounded": {
+          "expected": true,
+          "actual": true
+        },
+        "missingPatterns": [],
+        "missingCitationSources": []
+      },
+      "response": {
+        "answer": "Karl Johans gate 5 is in kommune 0301. Relevant research: \"Characterizing the top trading cycles rule for housing markets with lexicographic preferences\" — We consider a housing market model with limited externalities where agents care both about their own consumption via demand preferences and about the agent who receives their endowment via supply preferences (we extend the associated lexicographic preference domains introduced in Klaus and Meo, 2023). If preferences are demand lexicographic, then our model extends the classical Shapley-Scarf housing market (Shapley and Scarf, 1974) with strict preferences model. Our main result is a characterization of the corresponding top trading cycles (TTC) rule by individual rationality, pair efficiency, and strategy-proofness (Theorem 1), which extends that of Ekici (2024) from classical Shapley-Scarf housing markets with strict preferences to our model. Two further characterizations are immediately obtained by strengthening pair efficiency to either Pareto efficiency or pairwise stability (Corollaries 1 and 2). Finally, we show that as soon as we extend the preference domain to include demand lexicographic as well as supply lexicographic preferences (e.g., when preferences are separable), no rule satisfying individual rationality, pair efficiency, and strategy-proofness exists (Theorem 2).",
+        "grounded": true,
+        "citations": [
+          {
+            "source": "kartverket",
+            "url": "https://ws.geonorge.no/adresser/v1/sok",
+            "field": "kommunenr"
+          },
+          {
+            "source": "arxiv",
+            "url": "https://arxiv.org/abs/2410.16745v1",
+            "field": "Characterizing the top trading cycles rule for housing markets with lexicographic preferences"
+          }
+        ],
+        "trace": [
+          {
+            "step": "resolve_address",
+            "tool": "kartverket",
+            "input": {
+              "query": "Karl Johans gate 5, Oslo"
+            },
+            "ok": true,
+            "output": {
+              "address": "Karl Johans gate 5",
+              "kommunenr": "0301",
+              "kommunenavn": "OSLO",
+              "matrikkel": {
+                "knr": "0301",
+                "gnr": 207,
+                "bnr": 84
+              },
+              "lat": 59.91158209734912,
+              "lon": 10.748198567519214
+            }
+          },
+          {
+            "step": "search_papers",
+            "tool": "arxiv",
+            "input": {
+              "query": "Oslo housing market"
+            },
+            "ok": true,
+            "output": [
+              {
+                "text": "We consider a housing market model with limited externalities where agents care both about their own consumption via demand preferences and about the agent who receives their endowment via supply preferences (we extend the associated lexicographic preference domains introduced in Klaus and Meo, 2023). If preferences are demand lexicographic, then our model extends the classical Shapley-Scarf housing market (Shapley and Scarf, 1974) with strict preferences model. Our main result is a characterization of the corresponding top trading cycles (TTC) rule by individual rationality, pair efficiency, and strategy-proofness (Theorem 1), which extends that of Ekici (2024) from classical Shapley-Scarf housing markets with strict preferences to our model. Two further characterizations are immediately obtained by strengthening pair efficiency to either Pareto efficiency or pairwise stability (Corollaries 1 and 2). Finally, we show that as soon as we extend the preference domain to include demand lexicographic as well as supply lexicographic preferences (e.g., when preferences are separable), no rule satisfying individual rationality, pair efficiency, and strategy-proofness exists (Theorem 2).",
+                "title": "Characterizing the top trading cycles rule for housing markets with lexicographic preferences",
+                "url": "https://arxiv.org/abs/2410.16745v1",
+                "score": 1
+              },
+              {
+                "text": "Automated market makers (AMM) have grown to obtain significant market share within the cryptocurrency ecosystem, resulting in a proliferation of new products pursuing exotic strategies for horizontal differentiation. Yet, their theoretical properties are curiously homogeneous when a set of basic assumptions are met. In this paper, we start by presenting a universal approach to deriving a formula for liquidity provisioning for AMMs. Next, we show that the constant function market maker and token swap market maker models are theoretically equivalent when liquidity reserves are uniform. Proceeding with an examination of AMM market microstructure, we show how non-linear price effect translates into slippage for traders and impermanent losses for liquidity providers. We proceed by showing how impermanent losses are a function of both volatility and market depth and discuss the implications of these findings within the context of the literature.",
+                "title": "The Homogenous Properties of Automated Market Makers",
+                "url": "https://arxiv.org/abs/2105.02782v1",
+                "score": 0.5
+              },
+              {
+                "text": "Using a proprietary dataset of meta-orders and prediction signals, and assuming a quasi-linear impact model, we deconvolve market impact from past correlated trades and a predictable return component to elicit the temporal dependence of the market impact of a single daily meta-order, over a ten day horizon in various equity markets. We find that the impact of single meta-orders is to a first approximation universal and slowly decays to zero (or to a small value), possibly as a power-law. We show that auto-correlated order-flows and trade information contents fully accounts for the apparent plateau observed in the raw data. We discuss the possible bias introduced by the quasi-linear assumption.",
+                "title": "Slow decay of impact in equity markets",
+                "url": "https://arxiv.org/abs/1407.3390v1",
+                "score": 0.3333333333333333
+              },
+              {
+                "text": "In this article, we develop a model for the evolution of real estate prices. A wide range of inputs, including stochastic interest rates and changing demands for the asset, are considered. Maximizing their expected utility, home owners make optimal sale decisions given these changing market conditions. Using these optimal sale decisions, we simulate the implied evolution of housing prices providing insights into the recent subprime lending crisis.",
+                "title": "Housing Market Microstructure",
+                "url": "https://arxiv.org/abs/0907.1853v1",
+                "score": 0.25
+              },
+              {
+                "text": "Bidders in day-ahead electricity markets want to sell/buy electricity when their bids generate positive surplus and not to take an action when the reverse holds. However, non-convexities in these markets cause conflicts between the actions that the bidders want to take and the actual market results. In this work, we investigate the non-convex market clearing problem of Turkish market operator and propose three different rule sets. The first rule set allows both rejection of bids with positive surplus and acceptance of bids with negative surplus. The second and the third sets only allow one of these conflicted cases. By using total surplus maximization as the objective, we formulate three models and statistically explore their performance with the real data taken from Turkish market operator.",
+                "title": "Empirical comparison of three models for determining market clearing prices in Turkish day-ahead electricity market",
+                "url": "https://arxiv.org/abs/1712.00235v1",
+                "score": 0.2
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "id": "wrong-tool-trap",
       "query": "When was this building built?",
       "address": "Karl Johans gate 5, Oslo",
@@ -1053,7 +1233,7 @@
         "missingCitationSources": []
       },
       "response": {
-        "answer": "Karl Johans gate 5 is in kommune 0301, but Building-level construction year is not available from municipality demographics or area character sources.",
+        "answer": "Karl Johans gate 5 is in kommune 0301, but Building construction year is a property-level detail not available from municipality-level data sources; the agent can only access kommune demographics, character/history, and weather..",
         "grounded": false,
         "citations": [
           {

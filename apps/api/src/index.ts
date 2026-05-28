@@ -4,13 +4,17 @@ import { QueryRequest } from './domain/query.ts';
 import {
   handleQuery,
   type GetMunicipalityStats,
+  type GetWeather,
   type ResolveAddress,
   type Route,
   type SearchArticles,
+  type SearchPapers,
 } from './orchestrator/handle-query.ts';
 import { makeRouter } from './orchestrator/router.ts';
 import { searchArticles as wikipediaSearchArticles } from './retrievers/wikipedia.ts';
+import { searchPapers as arxivSearchPapers } from './retrievers/arxiv.ts';
 import { resolveAddress as kartverketResolveAddress } from './tools/kartverket.ts';
+import { getWeather as metGetWeather } from './tools/met.ts';
 import { getMunicipalityStats as ssbGetMunicipalityStats } from './tools/ssb.ts';
 
 const PORT = Number(process.env.PORT ?? 3000);
@@ -23,6 +27,10 @@ const getMunicipalityStats: GetMunicipalityStats = (kommunenr, metric) =>
 
 const searchArticles: SearchArticles = (query) =>
   wikipediaSearchArticles(query, { fetch });
+
+const getWeather: GetWeather = (lat, lon) => metGetWeather(lat, lon, { fetch });
+
+const searchPapers: SearchPapers = (query) => arxivSearchPapers(query, { fetch });
 
 const route: Route = makeRouter(anthropic('claude-haiku-4-5-20251001'));
 
@@ -58,6 +66,8 @@ async function handle(req: IncomingMessage): Promise<JsonResponse> {
       resolveAddress,
       getMunicipalityStats,
       searchArticles,
+      getWeather,
+      searchPapers,
       route,
     });
     return json(200, response);

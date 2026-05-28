@@ -6,7 +6,9 @@ import type { QueryResponse } from '../domain/query.ts';
 import { handleQuery, type Route } from '../orchestrator/handle-query.ts';
 import { makeRouter } from '../orchestrator/router.ts';
 import { searchArticles } from '../retrievers/wikipedia.ts';
+import { searchPapers } from '../retrievers/arxiv.ts';
 import { resolveAddress } from '../tools/kartverket.ts';
+import { getWeather } from '../tools/met.ts';
 import { getMunicipalityStats } from '../tools/ssb.ts';
 import { goldenSet, type GoldenCase } from './golden.ts';
 
@@ -81,6 +83,8 @@ async function main() {
     getMunicipalityStats: (k: string, m: 'population') =>
       getMunicipalityStats(k, m, { fetch }),
     searchArticles: (q: string) => searchArticles(q, { fetch }),
+    getWeather: (lat: number, lon: number) => getWeather(lat, lon, { fetch }),
+    searchPapers: (q: string) => searchPapers(q, { fetch }),
     route,
   };
 

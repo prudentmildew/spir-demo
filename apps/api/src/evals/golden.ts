@@ -8,11 +8,13 @@ export type GoldenCase = {
     routing: {
       // Tools the router is expected to invoke after resolve_address.
       // Empty array means the case should be answered from kartverket alone (or, for bad-address, never reach the router).
-      tools: Array<'get_municipality_stats' | 'search_articles'>;
+      tools: Array<
+        'get_municipality_stats' | 'search_articles' | 'get_weather' | 'search_papers'
+      >;
     };
     answer: {
       mustContain: Array<string | RegExp>;
-      citationSources: Array<'kartverket' | 'ssb' | 'wikipedia'>;
+      citationSources: Array<'kartverket' | 'ssb' | 'wikipedia' | 'met' | 'arxiv'>;
     };
   };
 };
@@ -104,6 +106,37 @@ export const goldenSet: GoldenCase[] = [
       answer: {
         mustContain: ['kommune 0301', /Population in 20\d{2} was \d{5,7}/],
         citationSources: ['kartverket', 'ssb'],
+      },
+    },
+  },
+  {
+    id: 'weather-only',
+    query: "What's the weather like at this address right now?",
+    address: 'Karl Johans gate 5, Oslo',
+    expect: {
+      matchKommunenr: '0301',
+      grounded: true,
+      routing: { tools: ['get_weather'] },
+      answer: {
+        // Forecast sentence template: "Current weather at the property: X°C, code, Y mm ...".
+        // Temperature can be negative; symbol_code is snake_case lowercase.
+        mustContain: ['kommune 0301', /-?\d+(\.\d+)?°C/, /[a-z_]+(day|night|polartwilight)/],
+        citationSources: ['kartverket', 'met'],
+      },
+    },
+  },
+  {
+    id: 'papers-only',
+    query: 'Are there academic research papers about Oslo housing markets?',
+    address: 'Karl Johans gate 5, Oslo',
+    expect: {
+      matchKommunenr: '0301',
+      grounded: true,
+      routing: { tools: ['search_papers'] },
+      answer: {
+        // arXiv result content is unstable; assert only the sentence frame and the citation source.
+        mustContain: ['kommune 0301', /Relevant research:/],
+        citationSources: ['kartverket', 'arxiv'],
       },
     },
   },
