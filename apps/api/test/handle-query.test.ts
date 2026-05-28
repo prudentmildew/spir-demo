@@ -3,15 +3,23 @@ import assert from 'node:assert/strict';
 import { handleQuery } from '../src/orchestrator/handle-query.ts';
 import type { Match } from '../src/domain/match.ts';
 import type { StatPoint } from '../src/domain/stat-point.ts';
+import type { Chunk } from '../src/domain/chunk.ts';
 
 const neverCalledStats = async (): Promise<StatPoint[]> => {
   throw new Error('getMunicipalityStats should not be called in this branch');
 };
 
+const neverCalledArticles = async (): Promise<Chunk[]> => {
+  throw new Error('searchArticles should not be called in this branch');
+};
+
+const noArticles = async (): Promise<Chunk[]> => [];
+
 const sampleMatch: Match = {
   address: 'Karl Johans gate 5, 0154 Oslo',
   matrikkel: { knr: '0301', gnr: 207, bnr: 264 },
   kommunenr: '0301',
+  kommunenavn: 'Oslo',
   lat: 59.911491,
   lon: 10.741234,
 };
@@ -32,7 +40,7 @@ test('single match + SSB returns one StatPoint: grounded answer from both source
 
   const response = await handleQuery(
     { query: 'tell me about this place', address: 'Karl Johans gate 5, Oslo' },
-    { resolveAddress, getMunicipalityStats },
+    { resolveAddress, getMunicipalityStats, searchArticles: noArticles },
   );
 
   assert.deepEqual(calls, [{ kommunenr: '0301', metric: 'population' }]);
@@ -46,7 +54,7 @@ test('single match + SSB returns one StatPoint: grounded answer from both source
   assert.equal(response.citations[0]?.field, 'kommunenr');
   assert.equal(response.citations[1]?.source, 'ssb');
   assert.equal(response.citations[1]?.field, 'population');
-  assert.equal(response.trace.length, 2);
+  assert.equal(response.trace.length, 3);
   assert.equal(response.trace[0]?.step, 'resolve_address');
   assert.equal(response.trace[0]?.tool, 'kartverket');
   assert.equal(response.trace[0]?.ok, true);
@@ -69,7 +77,7 @@ test('single match + SSB returns multiple StatPoints: answer uses latest year', 
 
   const response = await handleQuery(
     { query: 'q', address: 'Karl Johans gate 5, Oslo' },
-    { resolveAddress, getMunicipalityStats },
+    { resolveAddress, getMunicipalityStats, searchArticles: noArticles },
   );
 
   assert.equal(response.grounded, true);
@@ -84,7 +92,7 @@ test('single match + SSB returns empty: degrades to grounded:false, kartverket-o
 
   const response = await handleQuery(
     { query: 'q', address: 'Karl Johans gate 5, Oslo' },
-    { resolveAddress, getMunicipalityStats },
+    { resolveAddress, getMunicipalityStats, searchArticles: noArticles },
   );
 
   assert.equal(response.grounded, false);
@@ -92,7 +100,7 @@ test('single match + SSB returns empty: degrades to grounded:false, kartverket-o
   assert.match(response.answer, /not available|wasn't available|unavailable/i);
   assert.equal(response.citations.length, 1);
   assert.equal(response.citations[0]?.source, 'kartverket');
-  assert.equal(response.trace.length, 2);
+  assert.equal(response.trace.length, 3);
   assert.equal(response.trace[1]?.step, 'get_municipality_stats');
   assert.equal(response.trace[1]?.tool, 'ssb');
   assert.equal(response.trace[1]?.ok, true);
@@ -107,7 +115,7 @@ test('single match + SSB throws: degrades to grounded:false, SSB trace step ok:f
 
   const response = await handleQuery(
     { query: 'q', address: 'Karl Johans gate 5, Oslo' },
-    { resolveAddress, getMunicipalityStats },
+    { resolveAddress, getMunicipalityStats, searchArticles: noArticles },
   );
 
   assert.equal(response.grounded, false);
@@ -115,7 +123,7 @@ test('single match + SSB throws: degrades to grounded:false, SSB trace step ok:f
   assert.match(response.answer, /not available|wasn't available|unavailable/i);
   assert.equal(response.citations.length, 1);
   assert.equal(response.citations[0]?.source, 'kartverket');
-  assert.equal(response.trace.length, 2);
+  assert.equal(response.trace.length, 3);
   assert.equal(response.trace[1]?.step, 'get_municipality_stats');
   assert.equal(response.trace[1]?.tool, 'ssb');
   assert.equal(response.trace[1]?.ok, false);
@@ -127,7 +135,11 @@ test('zero matches: handler returns grounded:false clarification', async () => {
 
   const response = await handleQuery(
     { query: 'q', address: 'Nonexistent vei 999, Nowhere' },
-    { resolveAddress, getMunicipalityStats: neverCalledStats },
+    {
+      resolveAddress,
+      getMunicipalityStats: neverCalledStats,
+      searchArticles: neverCalledArticles,
+    },
   );
 
   assert.equal(response.grounded, false);
@@ -150,7 +162,11 @@ test('multiple matches: handler returns clarification with candidates in trace',
 
   const response = await handleQuery(
     { query: 'q', address: 'Karl Johans gate 5' },
-    { resolveAddress, getMunicipalityStats: neverCalledStats },
+    {
+      resolveAddress,
+      getMunicipalityStats: neverCalledStats,
+      searchArticles: neverCalledArticles,
+    },
   );
 
   assert.equal(response.grounded, false);
@@ -159,4 +175,184 @@ test('multiple matches: handler returns clarification with candidates in trace',
   assert.equal(response.trace.length, 1);
   assert.equal(response.trace[0]?.ok, true);
   assert.deepEqual(response.trace[0]?.output, [sampleMatch, other]);
+});
+
+test('single match + SSB OK + Wikipedia returns one chunk: grounded answer weaves Wikipedia in', async () => {
+  const resolveAddress = async () => [sampleMatch];
+  const statPoint: StatPoint = {
+    metric: 'population',
+    kommunenr: '0301',
+    year: 2024,
+    value: 717710,
+  };
+  const getMunicipalityStats = async () => [statPoint];
+  const chunk: Chunk = {
+    text: 'Oslo is the capital and most populous city of Norway.',
+    title: 'Oslo',
+    url: 'https://en.wikipedia.org/wiki/Oslo',
+    score: 0.95,
+  };
+  const searchCalls: string[] = [];
+  const searchArticles = async (query: string): Promise<Chunk[]> => {
+    searchCalls.push(query);
+    return [chunk];
+  };
+
+  const response = await handleQuery(
+    { query: 'q', address: 'Karl Johans gate 5, Oslo' },
+    { resolveAddress, getMunicipalityStats, searchArticles },
+  );
+
+  assert.deepEqual(searchCalls, ['Oslo']);
+  assert.equal(response.grounded, true);
+  assert.match(response.answer, /kommune 0301/);
+  assert.match(response.answer, /Population in 2024 was 717710/);
+  assert.match(response.answer, /Oslo is the capital and most populous city of Norway\./);
+  assert.equal(response.citations.length, 3);
+  assert.equal(response.citations[0]?.source, 'kartverket');
+  assert.equal(response.citations[1]?.source, 'ssb');
+  assert.equal(response.citations[2]?.source, 'wikipedia');
+  assert.equal(response.citations[2]?.url, 'https://en.wikipedia.org/wiki/Oslo');
+  assert.equal(response.citations[2]?.field, 'Oslo');
+  assert.equal(response.trace.length, 3);
+  assert.equal(response.trace[2]?.step, 'search_articles');
+  assert.equal(response.trace[2]?.tool, 'wikipedia');
+  assert.deepEqual(response.trace[2]?.input, { query: 'Oslo' });
+  assert.equal(response.trace[2]?.ok, true);
+  assert.deepEqual(response.trace[2]?.output, [chunk]);
+});
+
+test('single match + SSB OK + Wikipedia returns multiple chunks: answer uses top (first) chunk only', async () => {
+  const resolveAddress = async () => [sampleMatch];
+  const getMunicipalityStats = async (): Promise<StatPoint[]> => [
+    { metric: 'population', kommunenr: '0301', year: 2024, value: 717710 },
+  ];
+  const chunks: Chunk[] = [
+    {
+      text: 'TOP CHUNK TEXT about Oslo.',
+      title: 'Oslo',
+      url: 'https://en.wikipedia.org/wiki/Oslo',
+      score: 0.95,
+    },
+    {
+      text: 'SECOND CHUNK TEXT about Oslo history.',
+      title: 'History of Oslo',
+      url: 'https://en.wikipedia.org/wiki/History_of_Oslo',
+      score: 0.7,
+    },
+    {
+      text: 'THIRD CHUNK TEXT.',
+      title: 'Oslo Cathedral',
+      url: 'https://en.wikipedia.org/wiki/Oslo_Cathedral',
+      score: 0.4,
+    },
+  ];
+  const searchArticles = async (): Promise<Chunk[]> => chunks;
+
+  const response = await handleQuery(
+    { query: 'q', address: 'Karl Johans gate 5, Oslo' },
+    { resolveAddress, getMunicipalityStats, searchArticles },
+  );
+
+  assert.match(response.answer, /TOP CHUNK TEXT about Oslo\./);
+  assert.doesNotMatch(response.answer, /SECOND CHUNK TEXT/);
+  assert.doesNotMatch(response.answer, /THIRD CHUNK TEXT/);
+  assert.equal(response.citations.length, 3);
+  assert.equal(response.citations[2]?.url, 'https://en.wikipedia.org/wiki/Oslo');
+  assert.equal(response.citations[2]?.field, 'Oslo');
+  assert.deepEqual(response.trace[2]?.output, chunks);
+});
+
+test('single match + SSB OK + Wikipedia returns empty: no Wikipedia sentence, ssb-only citations, wikipedia trace step ok:true output:[]', async () => {
+  const resolveAddress = async () => [sampleMatch];
+  const getMunicipalityStats = async (): Promise<StatPoint[]> => [
+    { metric: 'population', kommunenr: '0301', year: 2024, value: 717710 },
+  ];
+  const searchArticles = async (): Promise<Chunk[]> => [];
+
+  const response = await handleQuery(
+    { query: 'q', address: 'Karl Johans gate 5, Oslo' },
+    { resolveAddress, getMunicipalityStats, searchArticles },
+  );
+
+  assert.equal(response.grounded, true);
+  assert.equal(
+    response.answer,
+    'Karl Johans gate 5, 0154 Oslo is in kommune 0301. Population in 2024 was 717710.',
+  );
+  assert.equal(response.citations.length, 2);
+  assert.equal(response.citations[0]?.source, 'kartverket');
+  assert.equal(response.citations[1]?.source, 'ssb');
+  assert.equal(response.trace.length, 3);
+  assert.equal(response.trace[2]?.step, 'search_articles');
+  assert.equal(response.trace[2]?.tool, 'wikipedia');
+  assert.deepEqual(response.trace[2]?.input, { query: 'Oslo' });
+  assert.equal(response.trace[2]?.ok, true);
+  assert.deepEqual(response.trace[2]?.output, []);
+});
+
+test('single match + SSB OK + Wikipedia throws: no Wikipedia sentence, ssb-only citations, wikipedia trace step ok:false no output', async () => {
+  const resolveAddress = async () => [sampleMatch];
+  const getMunicipalityStats = async (): Promise<StatPoint[]> => [
+    { metric: 'population', kommunenr: '0301', year: 2024, value: 717710 },
+  ];
+  const searchArticles = async (): Promise<Chunk[]> => {
+    throw new Error('Wikipedia unreachable');
+  };
+
+  const response = await handleQuery(
+    { query: 'q', address: 'Karl Johans gate 5, Oslo' },
+    { resolveAddress, getMunicipalityStats, searchArticles },
+  );
+
+  assert.equal(response.grounded, true);
+  assert.equal(
+    response.answer,
+    'Karl Johans gate 5, 0154 Oslo is in kommune 0301. Population in 2024 was 717710.',
+  );
+  assert.equal(response.citations.length, 2);
+  assert.equal(response.citations[0]?.source, 'kartverket');
+  assert.equal(response.citations[1]?.source, 'ssb');
+  assert.equal(response.trace.length, 3);
+  assert.equal(response.trace[2]?.step, 'search_articles');
+  assert.equal(response.trace[2]?.tool, 'wikipedia');
+  assert.deepEqual(response.trace[2]?.input, { query: 'Oslo' });
+  assert.equal(response.trace[2]?.ok, false);
+  assert.equal(response.trace[2]?.output, undefined);
+});
+
+test('single match + SSB degraded (empty) + Wikipedia returns chunk: degraded SSB sentence + Wikipedia sentence, grounded:false', async () => {
+  const resolveAddress = async () => [sampleMatch];
+  const getMunicipalityStats = async (): Promise<StatPoint[]> => [];
+  const chunk: Chunk = {
+    text: 'Oslo is the capital of Norway.',
+    title: 'Oslo',
+    url: 'https://en.wikipedia.org/wiki/Oslo',
+    score: 0.95,
+  };
+  const searchArticles = async (): Promise<Chunk[]> => [chunk];
+
+  const response = await handleQuery(
+    { query: 'q', address: 'Karl Johans gate 5, Oslo' },
+    { resolveAddress, getMunicipalityStats, searchArticles },
+  );
+
+  assert.equal(response.grounded, false);
+  assert.match(response.answer, /population/i);
+  assert.match(response.answer, /not available|wasn't available|unavailable/i);
+  assert.match(response.answer, /Oslo is the capital of Norway\./);
+  assert.equal(response.citations.length, 2);
+  assert.equal(response.citations[0]?.source, 'kartverket');
+  assert.equal(response.citations[1]?.source, 'wikipedia');
+  assert.equal(response.citations[1]?.url, 'https://en.wikipedia.org/wiki/Oslo');
+  assert.equal(response.citations[1]?.field, 'Oslo');
+  assert.equal(response.trace.length, 3);
+  assert.equal(response.trace[1]?.step, 'get_municipality_stats');
+  assert.equal(response.trace[1]?.ok, true);
+  assert.deepEqual(response.trace[1]?.output, []);
+  assert.equal(response.trace[2]?.step, 'search_articles');
+  assert.equal(response.trace[2]?.tool, 'wikipedia');
+  assert.deepEqual(response.trace[2]?.input, { query: 'Oslo' });
+  assert.equal(response.trace[2]?.ok, true);
+  assert.deepEqual(response.trace[2]?.output, [chunk]);
 });

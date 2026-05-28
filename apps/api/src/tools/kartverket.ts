@@ -6,6 +6,7 @@ export const KARTVERKET_SOK_URL = 'https://ws.geonorge.no/adresser/v1/sok';
 const KartverketAdresse = z.object({
   adressetekst: z.string(),
   kommunenummer: z.string(),
+  kommunenavn: z.string(),
   gardsnummer: z.number().int(),
   bruksnummer: z.number().int(),
   seksjonsnummer: z.number().int().optional(),
@@ -28,6 +29,7 @@ export async function resolveAddress(
   return body.adresser.map((a) => ({
     address: a.adressetekst,
     kommunenr: a.kommunenummer,
+    kommunenavn: a.kommunenavn,
     matrikkel: {
       knr: a.kommunenummer,
       gnr: a.gardsnummer,

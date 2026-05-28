@@ -4,7 +4,9 @@ import {
   handleQuery,
   type GetMunicipalityStats,
   type ResolveAddress,
+  type SearchArticles,
 } from './orchestrator/handle-query.ts';
+import { searchArticles as wikipediaSearchArticles } from './retrievers/wikipedia.ts';
 import { resolveAddress as kartverketResolveAddress } from './tools/kartverket.ts';
 import { getMunicipalityStats as ssbGetMunicipalityStats } from './tools/ssb.ts';
 
@@ -15,6 +17,9 @@ const resolveAddress: ResolveAddress = (query) =>
 
 const getMunicipalityStats: GetMunicipalityStats = (kommunenr, metric) =>
   ssbGetMunicipalityStats(kommunenr, metric, { fetch });
+
+const searchArticles: SearchArticles = (query) =>
+  wikipediaSearchArticles(query, { fetch });
 
 type JsonResponse = { status: number; body: unknown };
 
@@ -44,7 +49,11 @@ async function handle(req: IncomingMessage): Promise<JsonResponse> {
     if (!parsed.success) {
       return json(400, { error: 'invalid request', issues: parsed.error.issues });
     }
-    const response = await handleQuery(parsed.data, { resolveAddress, getMunicipalityStats });
+    const response = await handleQuery(parsed.data, {
+      resolveAddress,
+      getMunicipalityStats,
+      searchArticles,
+    });
     return json(200, response);
   }
 

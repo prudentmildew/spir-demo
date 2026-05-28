@@ -15,6 +15,7 @@ test('adapter parses Kartverket response into Match[]', async () => {
       {
         adressetekst: 'Karl Johans gate 5',
         kommunenummer: '0301',
+        kommunenavn: 'OSLO',
         gardsnummer: 207,
         bruksnummer: 264,
         seksjonsnummer: 0,
@@ -29,6 +30,7 @@ test('adapter parses Kartverket response into Match[]', async () => {
   const m = matches[0]!;
   assert.equal(m.address, 'Karl Johans gate 5');
   assert.equal(m.kommunenr, '0301');
+  assert.equal(m.kommunenavn, 'OSLO');
   assert.deepEqual(m.matrikkel, { knr: '0301', gnr: 207, bnr: 264 });
   assert.equal(m.lat, 59.911491);
   assert.equal(m.lon, 10.741234);
@@ -40,6 +42,7 @@ test('adapter includes seksjonsnummer as snr when nonzero', async () => {
       {
         adressetekst: 'Storgata 1',
         kommunenummer: '0301',
+        kommunenavn: 'OSLO',
         gardsnummer: 100,
         bruksnummer: 1,
         seksjonsnummer: 3,

@@ -11,6 +11,7 @@ export const Match = z.object({
   address: z.string(),
   matrikkel: Matrikkel,
   kommunenr: z.string(),
+  kommunenavn: z.string(),
   lat: z.number(),
   lon: z.number(),
 });
