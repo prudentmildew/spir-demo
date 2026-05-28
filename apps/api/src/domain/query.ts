@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { RoutingPlan } from './routing-plan.ts';
 
 export const QueryRequest = z.object({
   query: z.string().min(1),
@@ -24,6 +25,10 @@ export const QueryResponse = z.object({
   citations: z.array(Citation),
   trace: z.array(TraceStep),
   grounded: z.boolean(),
+  // Present iff the router ran (i.e. the address resolved to a single match).
+  // Surfaces the agent's intent independently of which tool calls actually
+  // executed, so an eval failure can be replayed offline with canned outputs.
+  plan: RoutingPlan.optional(),
 });
 
 export type QueryRequest = z.infer<typeof QueryRequest>;

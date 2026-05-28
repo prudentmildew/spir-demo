@@ -192,11 +192,8 @@ Resist adding a source before the evals can judge it. The cheap step is wiring a
 Updated as decisions are made.
 
 - **Consumer:** internal tool or external-facing? Drives whether auth/rate-limiting belong in the demo at all. — *Still open.*
-- **Model provider/model:** *decided* — Anthropic via the Vercel AI SDK; Claude Haiku 4.5 for the dev loop, Sonnet 4.6 for eval baselines. Re-test once the eval harness exists; provider abstraction makes a re-run on OpenAI/Google a config change.
+- **Model provider/model:** *decided* — Anthropic via the Vercel AI SDK; Claude Haiku 4.5 for the dev loop, Sonnet 4.6 for eval baselines. Provider abstraction makes a re-run on OpenAI/Google a config change.
 - **Retrieval depth:** keyword-search-and-cite for the demo, or a real embedding index? — *Position unchanged: keyword first. Let evals tell you when to upgrade.*
 - **How far to take HITL:** *decided* — none for this demo. The pattern is documented in §7.5 so the gates' real-system locations stay visible.
-
-Still to grill before going wide (see open tasks):
-
-- **Source adapter conventions** — MET `User-Agent`, freshness/caching policy per source, error shape, where the adapter→tool wrapping layer lives.
-- **Trace shape and storage** — in-memory only or persisted; granularity; relation to the AI SDK's built-in step loop.
+- **Source adapter conventions:** *decided* — User-Agent + contact in every adapter; conditional-GET caching where the source supports it (see [ADR-0004](./adr/0004-freshness-over-snapshots.md)); errors throw and surface as `trace[i].ok: false`.
+- **Trace shape and storage:** *decided* — `QueryResponse` returns `trace` (what ran) and `plan` (what was decided) as siblings; offline replay drives `handleQuery` with canned deps from a recorded report (see [ADR-0007](./adr/0007-replay-with-canned-deps.md)).

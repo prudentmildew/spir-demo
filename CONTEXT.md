@@ -40,8 +40,20 @@ _Avoid_: cited, sourced, backed (use `grounded` for the boolean, `citation` for 
 A `{ source, url, field? }` record attached to the response, pointing at the specific tool result or retriever chunk a claim came from. `field` names the structured field when the citation is from a tool.
 
 **trace**:
-The ordered list of steps the orchestrator took for a request — each step records the tool/retriever invoked, its input, and whether it succeeded. Returned alongside the answer so non-deterministic failures can be debugged after the fact.
+The ordered list of tool/retriever steps the orchestrator executed for a request — each step records what was invoked, its input, and whether it succeeded. Sibling to **routing plan** on the response: the plan is what was decided, the trace is what happened. Returned alongside the answer so non-deterministic failures can be debugged after the fact.
 _Avoid_: log, history, run
+
+**router**:
+The LLM step (Claude Haiku 4.5) that turns the resolved match + user question into a **routing plan**. The only probabilistic step in the orchestrator's loop; distinct from the **tools** and **retrievers** it picks between.
+_Avoid_: planner, dispatcher, model
+
+**routing plan**:
+The ordered list of tool/retriever steps the router decided to run for this turn, plus an optional `outOfScope` refusal. Surfaced as `plan` on the response so traces can be replayed offline with canned outputs.
+_Avoid_: plan, strategy, route
+
+**out-of-scope**:
+A router decision that no source the agent has access to can honestly answer the question. Returned as `plan.outOfScope.reason` and renders as `grounded: false` with the reason cited. Distinct from a *tool failure* — the latter is "I tried and the source was unavailable"; the former is "I refused to try because no source applies".
+_Avoid_: refusal, unsupported, unknown
 
 ## Example dialogue
 

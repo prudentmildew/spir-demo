@@ -87,6 +87,7 @@ export async function handleQuery(
       grounded: false,
       citations: [kartverketCitation],
       trace: [resolveStep],
+      plan,
     };
   }
 
@@ -235,5 +236,6 @@ export async function handleQuery(
     grounded,
     citations,
     trace,
+    plan,
   };
 }
