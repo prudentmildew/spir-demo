@@ -68,3 +68,7 @@ _Avoid_: refusal, unsupported, unknown
 > **Dev:** And "what's the area like?"
 >
 > **Domain expert:** Mixed. Numbers (population, age distribution) come from SSB, joined on *kommunenr* — that's a *tool*. Character of the neighbourhood, history — that's a *retriever* over web search, with citations to the specific sources quoted. The agent has to decide which parts of the question are structured and which aren't; the *trace* should show that split.
+>
+> **Dev:** And "what shops are nearby?"
+>
+> **Domain expert:** Also the *retriever*. Nearby places — shops, schools, parks, transit, landmarks — are observable and web-grounded, so the agent searches and cites them; the answer can quote several sources, each its own *citation*. The line to hold is between *places near* the property and *register facts about* it: ownership (*hjemmelshaver*), *heftelse*/*servitutt*, price, year built — those live only in authoritative registers, so the agent refuses them as *out-of-scope* even when a web page mentions them. Nearby ≠ building-specific.

@@ -8,9 +8,7 @@ export type GoldenCase = {
     routing: {
       // Tools the router is expected to invoke after resolve_address.
       // Empty array means the case should be answered from kartverket alone (or, for bad-address, never reach the router).
-      tools: Array<
-        'get_municipality_stats' | 'search_web' | 'get_weather'
-      >;
+      tools: Array<'get_municipality_stats' | 'search_web' | 'get_weather'>;
     };
     answer: {
       mustContain: Array<string | RegExp>;
@@ -57,11 +55,7 @@ export const goldenSet: GoldenCase[] = [
       grounded: true,
       routing: { tools: ['get_municipality_stats', 'search_web'] },
       answer: {
-        mustContain: [
-          'kommune 0301',
-          /Folketallet i 20\d{2} var \d{3} \d{3}/,
-          /Fra «.+»:/,
-        ],
+        mustContain: ['kommune 0301', /Folketallet i 20\d{2} var \d{3} \d{3}/, /Fra «.+»:/],
         citationSources: ['kartverket', 'ssb', 'web'],
       },
     },
@@ -141,6 +135,26 @@ export const goldenSet: GoldenCase[] = [
         // citation source, never the content. Keeping this case alongside `story-only` proves that
         // both a "character" question ("What is the area like?") and a "research" question route to
         // the single `search_web` step. Frame is Norwegian per ADR-0009.
+        mustContain: ['kommune 0301', /Fra «.+»:/],
+        citationSources: ['kartverket', 'web'],
+      },
+    },
+  },
+  {
+    id: 'nearby-places',
+    query: 'Hvilke matbutikker er i nærheten?',
+    address: 'Karl Johans gate 5, Oslo',
+    expect: {
+      matchKommunenr: '0301',
+      grounded: true,
+      // Nearby places/amenities now route to search_web (the agent's scope was
+      // widened beyond kommune-level to points of interest around the property).
+      // Web content is non-deterministic; assert only the sentence frame and the
+      // `web` citation source, never the content. The contrast with
+      // `wrong-tool-trap` proves the boundary: places near the property are in
+      // scope, but register facts about the building itself are not.
+      routing: { tools: ['search_web'] },
+      answer: {
         mustContain: ['kommune 0301', /Fra «.+»:/],
         citationSources: ['kartverket', 'web'],
       },

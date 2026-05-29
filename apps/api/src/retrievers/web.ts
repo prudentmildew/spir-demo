@@ -8,7 +8,8 @@ import type { Chunk } from '../domain/chunk.ts';
 const SYSTEM_PROMPT = [
   'You are a research assistant with access to a web search tool.',
   'When answering, first search the web for the most relevant sources.',
-  'Then quote short, VERBATIM passages from the best sources and cite each one inline.',
+  'Surface several complementary sources rather than stopping at the first good hit.',
+  'Then quote relevant, VERBATIM passages from the best sources and cite each one inline.',
   'Do not paraphrase or summarise the quoted material: reproduce the source text exactly,',
   'word for word, and attach an inline citation to every quoted passage so each quote is',
   'tied to the URL it came from.',
@@ -21,16 +22,13 @@ const SYSTEM_PROMPT = [
  * The orchestrator injects the model and catches retriever failures, so we let
  * generateText errors propagate rather than swallowing them.
  */
-export async function searchWeb(
-  query: string,
-  deps: { model: LanguageModel },
-): Promise<Chunk[]> {
+export async function searchWeb(query: string, deps: { model: LanguageModel }): Promise<Chunk[]> {
   const result = await generateText({
     model: deps.model,
     system: SYSTEM_PROMPT,
     prompt: query,
     tools: {
-      web_search: anthropic.tools.webSearch_20250305({ maxUses: 3 }),
+      web_search: anthropic.tools.webSearch_20250305({ maxUses: 5 }),
     },
   });
 

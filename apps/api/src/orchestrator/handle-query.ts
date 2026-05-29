@@ -19,6 +19,11 @@ const KARTVERKET_URL = 'https://ws.geonorge.no/adresser/v1/sok';
 const SSB_URL = 'https://data.ssb.no/api/pxwebapi/v2-beta/tables/11342/data';
 const MET_URL = 'https://api.met.no/weatherapi/locationforecast/2.0/compact';
 
+// How many verbatim web passages to surface in the answer. Each is rendered as
+// its own cited "Fra «title»: text" sentence — never synthesised into one — so
+// raising this enriches the answer without crossing the grounded line.
+const WEB_CHUNK_LIMIT = 3;
+
 type Trace = QueryResponse['trace'];
 type TraceStep = Trace[number];
 type Citation = QueryResponse['citations'][number];
@@ -133,7 +138,7 @@ export async function handleQuery(
   let ssbInvoked = false;
   let ssbLatest: StatPoint | null = null;
   let ssbDegraded = false;
-  let webTopChunk: Chunk | null = null;
+  const webChunks: Chunk[] = [];
   let metInvoked = false;
   let forecast: Forecast | null = null;
   let metDegraded = false;
@@ -181,10 +186,13 @@ export async function handleQuery(
           ok: true,
           output: chunks,
         });
-        const top = chunks[0];
-        if (top !== undefined) {
-          webTopChunk = top;
-          citations.push({ source: 'web', url: top.url, field: top.title });
+        const seenUrls = new Set<string>();
+        for (const chunk of chunks.slice(0, WEB_CHUNK_LIMIT)) {
+          webChunks.push(chunk);
+          if (!seenUrls.has(chunk.url)) {
+            seenUrls.add(chunk.url);
+            citations.push({ source: 'web', url: chunk.url, field: chunk.title });
+          }
         }
       } catch {
         trace.push({
@@ -225,8 +233,8 @@ export async function handleQuery(
     sentences.push(`${match.address} ligger i kommune ${match.kommunenr}.`);
   }
 
-  if (webTopChunk !== null) {
-    sentences.push(`Fra «${webTopChunk.title}»: ${webTopChunk.text}`);
+  for (const chunk of webChunks) {
+    sentences.push(`Fra «${chunk.title}»: ${chunk.text}`);
   }
 
   if (metInvoked && forecast !== null) {
