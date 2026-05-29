@@ -9,6 +9,7 @@
     "dev": "pnpm -r dev",
     "dev:web": "pnpm --filter web dev",
     "dev:api": "pnpm --filter api dev",
+    "build:web": "pnpm --filter web build",
     "start": "pnpm --filter api start",
     "test": "pnpm -r --if-present test",
     "typecheck": "pnpm -r --if-present typecheck",
