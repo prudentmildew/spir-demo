@@ -294,3 +294,25 @@
   color: #a8a8b0;
   font-style: italic;
 }
+
+.landing__metaLinks {
+  display: block;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: #6b6b75;
+}
+
+.landing__metaLink {
+  color: #a8a8b0;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(168, 168, 176, 0.35);
+  transition: color 180ms ease;
+}
+
+.landing__metaLink:hover {
+  color: #6ba4ff;
+  border-color: #6ba4ff;
+}

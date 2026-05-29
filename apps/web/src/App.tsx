@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { EditorialApp } from './app/index.tsx';
+import { DataFlow } from './meta/data-flow.tsx';
+import { Metodikk } from './meta/metodikk.tsx';
 import { Cartographic } from './prototypes/cartographic/index.tsx';
 import { Developer } from './prototypes/developer/index.tsx';
 import { Editorial } from './prototypes/editorial/index.tsx';
@@ -10,7 +12,12 @@ import { Workspace } from './prototypes/workspace/index.tsx';
 import './landing.css';
 
 type PrototypeLetter = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g';
-type Route = { kind: 'app' } | { kind: 'landing' } | { kind: 'prototype'; letter: PrototypeLetter };
+type Route =
+  | { kind: 'app' }
+  | { kind: 'landing' }
+  | { kind: 'metodikk' }
+  | { kind: 'data-flow' }
+  | { kind: 'prototype'; letter: PrototypeLetter };
 
 const PROTOTYPE_LETTERS = new Set<PrototypeLetter>(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
 
@@ -18,6 +25,8 @@ const parseHash = (): Route => {
   const h = window.location.hash.replace(/^#\/?/, '').replace(/\/$/, '');
   if (h === '' || h === '/') return { kind: 'app' };
   if (h === 'prototypes') return { kind: 'landing' };
+  if (h === 'metodikk') return { kind: 'metodikk' };
+  if (h === 'data-flow') return { kind: 'data-flow' };
   const m = h.match(/^prototypes\/([a-g])$/);
   if (m && PROTOTYPE_LETTERS.has(m[1] as PrototypeLetter)) {
     return { kind: 'prototype', letter: m[1] as PrototypeLetter };
@@ -36,6 +45,8 @@ export function App() {
 
   if (route.kind === 'app') return <EditorialApp />;
   if (route.kind === 'landing') return <Landing />;
+  if (route.kind === 'metodikk') return <Metodikk />;
+  if (route.kind === 'data-flow') return <DataFlow />;
   if (route.letter === 'a') return <Cartographic />;
   if (route.letter === 'b') return <Editorial />;
   if (route.letter === 'c') return <Developer />;
@@ -191,6 +202,16 @@ function Landing() {
         <em>Hva er befolkningen?</em> (grunnet svar). I tillegg vær, nabolag, og begge-kilder for
         D–G. F og G utvider spørsmålsbiblioteket til 15 tematiske spørsmål, med blikk mot fremtidige
         kilder. Agenten er forhåndsskrevet — dette er render-problemet.
+        <span className="landing__metaLinks">
+          Bak kulissene:{' '}
+          <a className="landing__metaLink" href="#/metodikk">
+            Metodikk
+          </a>{' '}
+          ·{' '}
+          <a className="landing__metaLink" href="#/data-flow">
+            Dataflyt
+          </a>
+        </span>
       </footer>
     </div>
   );
