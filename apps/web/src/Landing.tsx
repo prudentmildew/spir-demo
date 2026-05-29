@@ -28,8 +28,8 @@ export function Landing() {
       lede={
         <>
           Samme forhåndsskrevne agent, gjengitt i syv flater og tre innramminger. Dette er{' '}
-          <em>render-problemet</em>, tatt på alvor: hvordan ser et ærlig agentsvar ut — med plan,
-          kilder og avslag — for utviklere, PM og leder i samme rom?
+          <em>fremstillingsproblemet</em> tatt på alvor: hvordan ser et ærlig agentsvar ut — med
+          plan, kilder og avslag — for utviklere, PM og leder i samme rom?
         </>
       }
     >
@@ -40,9 +40,9 @@ export function Landing() {
           Gå rett inn i demoen.
         </h2>
         <p className="front__heroBody">
-          Den redaksjonelle flaten — antikva-prosa, fotnotekilder, sporing som sluttnoter — ble
-          valgt som v1 og koblet til agenten. Den viser planen, kjøringen og svaret for hver runde,
-          og <em>avslår</em> like tydelig som den svarer.
+          Den redaksjonelle flaten — antikva-prosa, fotnotekilder, sporing som sluttnoter — valgte
+          jeg som v1 og koblet til agenten. Den viser planen, kjøringen og svaret for hver runde, og{' '}
+          <em>avslår</em> like tydelig som den svarer.
         </p>
         <a className="front__cta" href="#/demo">
           Åpne demoen
@@ -52,8 +52,8 @@ export function Landing() {
         </a>
         <p className="front__honesty">
           <span className="editorial__mono">Ærlig om hva dette er:</span> dette er v1-grensesnittet.
-          Agent-backenden er <em>ikke</em> driftet på dette statiske nettstedet, så live-spørringer
-          svarer ikke her. Klon repoet og kjør det lokalt for ekte svar — det er en del av poenget.
+          Agenten selv kjører <em>ikke</em> på dette statiske nettstedet, så spørringer i sanntid
+          svarer ikke her. Klon koden og kjør den lokalt for ekte svar — det er en del av poenget.
         </p>
       </section>
 
