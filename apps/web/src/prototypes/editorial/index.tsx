@@ -199,9 +199,8 @@ function EmptyState() {
       <div className="ed__emptyKicker">En innledende merknad</div>
       <p className="ed__emptyBody">
         Agenten svarer på spørsmål om eiendommen over ved å rute mellom strukturerte offentlige data
-        (Kartverket, SSB, Meteorologisk institutt) og ustrukturert nettsøk.
-        Hver påstand er kildebelagt. Der ingen kilde passer — eierskap, heftelser — avslår den, helt
-        rett ut.
+        (Kartverket, SSB, Meteorologisk institutt) og ustrukturert nettsøk. Hver påstand er
+        kildebelagt. Der ingen kilde passer — eierskap, heftelser — avslår den, helt rett ut.
       </p>
       <p className="ed__emptyHint">Velg et spørsmål fra spalten til høyre for å starte.</p>
     </div>

@@ -1,5 +1,6 @@
+import { EditorialShell, Pillar } from '../shared/editorial-shell.tsx';
 import { ADR_COUNT, EVAL_RUN_COUNT, PROTOTYPE_COUNT, TEST_FILE_COUNT } from './counts.ts';
-import { MetaLayout, Pillar } from './meta-layout.tsx';
+import './meta.css';
 
 type Phase = {
   no: string;
@@ -63,8 +64,8 @@ const PHASES: Phase[] = [
       <>
         I stedet for å gjette på uttrykket ble {PROTOTYPE_COUNT} fullstendige registre bygd på
         kast-ruter — fra kartografisk offentlig-verktøy til redaksjonell publikasjon til mørkt
-        utviklerkonsoll — alle matet fra samme kontrollerte fixtures. Register B (redaksjonell) ble valgt
-        for v1; det er flaten du ser på <span className="meta__mono">#/</span>.
+        utviklerkonsoll — alle matet fra samme kontrollerte fixtures. Register B (redaksjonell) ble
+        valgt for v1; det er flaten du ser på <span className="meta__mono">#/demo</span>.
       </>
     ),
     avvik: (
@@ -123,7 +124,8 @@ const PHASES: Phase[] = [
     body: (
       <>
         Enhetstester ({TEST_FILE_COUNT} testfiler) dekker adaptere og orkestrering deterministisk,
-        med kontrollerte avhengigheter. Men korrekthet for en LLM-agent måles ikke av enhetstester alene.
+        med kontrollerte avhengigheter. Men korrekthet for en LLM-agent måles ikke av enhetstester
+        alene.
       </>
     ),
     avvik: (
@@ -186,7 +188,7 @@ const DIVERGENCES: { title: string; value: string; body: React.ReactNode }[] = [
 
 export function Metodikk() {
   return (
-    <MetaLayout
+    <EditorialShell
       kicker="Eiendomsinfo-agent · bak kulissene"
       title={
         <>
@@ -207,10 +209,15 @@ export function Metodikk() {
           >
             7 phases of AI development
           </a>{' '}
-          — fulgt der det tjente arbeidet, og bevisst forlatt der det ikke gjorde det.
+          — fulgt der det tjente arbeidet, og bevisst forlatt der det ikke gjorde det. De forkastede
+          uttrykkene ligger fortsatt i{' '}
+          <a className="meta__inlineLink" href="#/prototypes">
+            prototypkatalogen
+          </a>
+          .
         </>
       }
-      sibling={{ href: '#/data-flow', label: 'Dataflyt' }}
+      right={{ href: '#/data-flow', label: 'Dataflyt' }}
     >
       <section className="meta__section" aria-labelledby="metodikk-faser">
         <h2 className="meta__sectionTitle" id="metodikk-faser">
@@ -262,6 +269,6 @@ export function Metodikk() {
         adaptere og orkestrering, og {EVAL_RUN_COUNT} loggførte eval-kjøringer som måler rutevalg og
         svarkvalitet mot levende kilder. Tester fanger regresjoner; evals fanger feil dømmekraft.
       </Pillar>
-    </MetaLayout>
+    </EditorialShell>
   );
 }

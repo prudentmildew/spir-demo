@@ -567,7 +567,12 @@ function CommandPalette({
   const items = RAIL.filter((it) => it.label.toLowerCase().includes(filter.toLowerCase()));
 
   return (
-    <div className="dev__palette" role="dialog" aria-modal="true" aria-label="Hurtigspørsmål-palett">
+    <div
+      className="dev__palette"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Hurtigspørsmål-palett"
+    >
       <button
         type="button"
         className="dev__paletteBackdrop"

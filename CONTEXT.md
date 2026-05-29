@@ -1,4 +1,4 @@
-# Property-Info Agent
+# Spir Demo by Consid
 
 The domain language for an agent that answers questions about a Norwegian property and its surroundings, using open data.
 

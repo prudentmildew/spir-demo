@@ -149,6 +149,68 @@
   color: var(--ink-mute);
 }
 
+/* ── masthead home link (demoens eneste utgående navigasjon) ─ */
+
+.ed__masterRight {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.ed__homeLink {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition:
+    color 120ms ease,
+    border-color 120ms ease;
+}
+
+.ed__homeLink:hover {
+  color: var(--teal);
+  border-bottom-color: var(--teal);
+}
+
+.ed__masterEdition {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* ── stående produksjonsmerknad (ingen backend deployet) ──── */
+
+.ed__standingNote {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 64px;
+  background: var(--paper-2);
+  border-bottom: 1px solid var(--rule);
+}
+
+.ed__standingNoteKicker {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--teal);
+  font-weight: 500;
+}
+
+.ed__standingNoteBody {
+  margin: 0;
+  max-width: 760px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
 /* ── network / HTTP error treatment ─────────────────────── */
 
 .ed__errorTurn {

@@ -21,7 +21,7 @@ export function Minimal() {
 function Brand() {
   return (
     <header className="min__brand">
-      <a className="min__brandLink" href="#/">
+      <a className="min__brandLink" href="#/prototypes">
         <span className="min__brandMark" aria-hidden="true">
           ◇
         </span>

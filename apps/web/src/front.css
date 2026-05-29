@@ -1,0 +1,237 @@
+/* The Landing front door, in the editorial register (Register B).
+   Draws on the shared :root tokens from shared/editorial.css — never
+   redefines the palette or fonts here. Three-tier hierarchy, loudest first:
+   hero (the demo CTA) → secondary (catalog) → quiet meta pair. The classes
+   share the front__ namespace; the shell chrome stays .editorial__. */
+
+/* ── HERO: the demo, the primary call to action ─────────────── */
+
+.front__hero {
+  padding: 52px 0 8px;
+}
+
+.front__heroKicker {
+  font-family: var(--editorial-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 18px;
+}
+
+.front__heroTitle {
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 18px;
+}
+
+.front__heroBody {
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0 0 30px;
+  max-width: 640px;
+}
+
+.front__heroBody em {
+  font-style: italic;
+  color: var(--ink);
+}
+
+/* The one loud element on the page. */
+.front__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--editorial-sans);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--paper);
+  background: var(--teal);
+  text-decoration: none;
+  padding: 15px 26px;
+  border: 1px solid var(--teal);
+  transition:
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.front__cta:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.front__ctaArrow {
+  font-size: 18px;
+  transition: transform 180ms ease;
+}
+
+.front__cta:hover .front__ctaArrow {
+  transform: translateX(3px);
+}
+
+/* The standing honesty note — quiet, but always present. */
+.front__honesty {
+  font-family: var(--editorial-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 28px 0 0;
+  padding: 16px 20px;
+  border-left: 2px solid var(--refused-soft);
+  background: rgba(154, 126, 92, 0.06);
+  max-width: 620px;
+}
+
+.front__honesty em {
+  font-style: italic;
+  color: var(--ink);
+}
+
+.front__honesty .editorial__mono {
+  color: var(--refused);
+  margin-right: 8px;
+}
+
+/* ── SECONDARY: the catalog card (breadth / craft) ──────────── */
+
+.front__secondary {
+  padding: 44px 0 8px;
+}
+
+.front__catalogCard {
+  display: block;
+  position: relative;
+  padding: 28px 30px 30px;
+  border: 1px solid var(--ink);
+  background: var(--paper-2);
+  text-decoration: none;
+  color: var(--ink);
+  transition:
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.front__catalogCard:hover {
+  border-color: var(--teal);
+  background: var(--paper);
+}
+
+.front__catalogKicker {
+  font-family: var(--editorial-sans);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.front__catalogTitle {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.018em;
+  margin: 0 0 12px;
+}
+
+.front__catalogBody {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0;
+  max-width: 600px;
+}
+
+.front__catalogBody em {
+  font-style: italic;
+  color: var(--ink);
+}
+
+.front__catalogArrow {
+  position: absolute;
+  top: 28px;
+  right: 30px;
+  font-family: var(--editorial-sans);
+  font-size: 22px;
+  color: var(--teal);
+  transition: transform 180ms ease;
+}
+
+.front__catalogCard:hover .front__catalogArrow {
+  transform: translateX(4px);
+}
+
+/* ── META PAIR: the quiet "bak kulissene" links ─────────────── */
+
+.front__meta {
+  padding: 44px 0 8px;
+}
+
+.front__metaTitle {
+  font-family: var(--editorial-sans);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 600;
+  margin: 0 0 22px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.front__metaPair {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+.front__metaLink {
+  display: block;
+  background: var(--paper);
+  padding: 22px 22px 24px;
+  text-decoration: none;
+  transition: background 180ms ease;
+}
+
+.front__metaLink:hover {
+  background: var(--paper-2);
+}
+
+.front__metaLinkLabel {
+  display: block;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--teal);
+  margin-bottom: 7px;
+  transition: color 180ms ease;
+}
+
+.front__metaLink:hover .front__metaLinkLabel {
+  color: var(--ink);
+}
+
+.front__metaLinkDesc {
+  display: block;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* ── responsive: stack the meta pair ────────────────────────── */
+
+@media (max-width: 720px) {
+  .front__metaPair {
+    grid-template-columns: 1fr;
+  }
+
+  .front__heroTitle {
+    font-size: 28px;
+  }
+}

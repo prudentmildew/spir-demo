@@ -77,7 +77,7 @@ export function Playful() {
 function Topbar() {
   return (
     <header className="play__topbar">
-      <a className="play__brand" href="#/">
+      <a className="play__brand" href="#/prototypes">
         <span className="play__brandMark" aria-hidden="true">
           ✺
         </span>

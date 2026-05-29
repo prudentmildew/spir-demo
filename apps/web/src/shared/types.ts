@@ -39,10 +39,7 @@ export type GetMunicipalityStatsStep = {
 export type SearchWebStep = { tool: 'search_web'; query: string };
 export type GetWeatherStep = { tool: 'get_weather' };
 
-export type RoutingStep =
-  | GetMunicipalityStatsStep
-  | SearchWebStep
-  | GetWeatherStep;
+export type RoutingStep = GetMunicipalityStatsStep | SearchWebStep | GetWeatherStep;
 
 export type RoutingPlan = {
   steps: RoutingStep[];

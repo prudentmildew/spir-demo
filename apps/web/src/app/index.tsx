@@ -164,6 +164,24 @@ export function EditorialApp() {
     <div className="ed">
       <div className="ed__paperGrain" aria-hidden="true" />
 
+      {/* Stående merknad, kun i produksjon (GitHub Pages). Hero-demoen er
+          BEVISST ikke-funksjonell her: bare den statiske frontenden deployes,
+          agent-backenden (API-en) gjør det ikke. /query gir derfor 404 i
+          produksjon — det er en del av ærlighetstesen i designet, ikke en feil.
+          IKKE «fiks» dette ved å peke demoen mot en ekstern API; klon og kjør
+          lokalt for å se ekte, kildebelagte svar. */}
+      {import.meta.env.PROD && (
+        <aside className="ed__standingNote" role="note">
+          <span className="ed__standingNoteKicker">Om denne visningen</span>
+          <p className="ed__standingNoteBody">
+            Dette er v1-grensesnittet, vist som en statisk nettside. Agenten bak — den som faktisk
+            slår opp i offentlige kilder — er ikke satt i drift her, så spørsmål gir ingen ekte svar
+            på denne siden. Vil du se den i arbeid? Klon prosjektet og kjør det lokalt (API-en på
+            port 3000), så svarer agenten med kildebelagte svar.
+          </p>
+        </aside>
+      )}
+
       <header className="ed__masthead">
         <div className="ed__masterLeft">
           <span className="ed__nameplate">Eiendomsregisteret</span>
@@ -172,7 +190,13 @@ export function EditorialApp() {
           </span>
           <span className="ed__edition">Eiendomsinfo-agent</span>
         </div>
-        <div className="ed__masterRight">Utgave 01 · En leserutgave</div>
+        <div className="ed__masterRight">
+          {/* Demoens eneste utgående navigasjon: tilbake til forsiden. */}
+          <a className="ed__homeLink" href="/">
+            ← forside
+          </a>
+          <span className="ed__masterEdition">Utgave 01 · En leserutgave</span>
+        </div>
       </header>
 
       <article className="ed__article">
@@ -460,9 +484,8 @@ function EmptyState() {
       <div className="ed__emptyKicker">En innledende merknad</div>
       <p className="ed__emptyBody">
         Agenten svarer på spørsmål om eiendommen over ved å rute mellom strukturerte offentlige data
-        (Kartverket, SSB, Meteorologisk institutt) og ustrukturert nettsøk.
-        Hver påstand er kildebelagt. Der ingen kilde passer — eierskap, heftelser — avslår den, helt
-        rett ut.
+        (Kartverket, SSB, Meteorologisk institutt) og ustrukturert nettsøk. Hver påstand er
+        kildebelagt. Der ingen kilde passer — eierskap, heftelser — avslår den, helt rett ut.
       </p>
       <p className="ed__emptyHint">Velg et spørsmål fra spalten til høyre for å starte.</p>
     </div>
@@ -590,8 +613,9 @@ function ErrorTurn({
         <div id={bodyId} className="ed__errorTurn">
           <div className="ed__errorKicker">Agenten kom ikke til kildene</div>
           <p className="ed__errorMsg">
-            <em>Vi nådde ikke agenten denne gangen.</em> Sjekk at API-en kjører på port 3000, og
-            prøv igjen.
+            <em>Vi nådde ikke agenten denne gangen.</em> På denne nettsiden er agenten ikke i drift,
+            så spørsmål får ikke svar her. Kjører du prosjektet lokalt? Da må API-en være startet
+            (på port 3000) før du prøver igjen.
           </p>
           <p className="ed__errorDetail">{detail}</p>
         </div>

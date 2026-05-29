@@ -96,10 +96,7 @@ export const WEATHER: QueryResponse = {
 export const NEIGHBORHOOD: QueryResponse = {
   answer:
     'Dronning Mauds gate 10, 0250 Oslo ligger i kommune 0301. Fra «Frogner»: Frogner er en velstående bydel vest i Oslo sentrum, kjent for skulpturparken, ambassadestrøket og 1800-talls­arkitekturen langs Bygdøy allé.',
-  citations: [
-    KARTVERKET_CITATION,
-    { source: 'web', url: FROGNER_WEB_URL, field: 'Frogner' },
-  ],
+  citations: [KARTVERKET_CITATION, { source: 'web', url: FROGNER_WEB_URL, field: 'Frogner' }],
   trace: [
     RESOLVE_STEP,
     {

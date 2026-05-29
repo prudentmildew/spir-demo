@@ -1,4 +1,4 @@
-# Property-Info Agent
+# Spir Demo by Consid
 
 A grounded question-answering agent for Norwegian properties, built on open data. Give it an address and a question — "what's the area like?", "what shops are nearby?", "what's the weather?", "how many people live in the municipality?" — and it resolves the address, decides which sources can honestly answer, calls them, and returns an answer where **every claim carries a citation**. When the question asks for a fact only an authoritative register holds (e.g. who owns a property, when the building was built), it refuses honestly rather than guessing.
 

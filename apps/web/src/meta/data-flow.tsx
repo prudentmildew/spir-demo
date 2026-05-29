@@ -1,4 +1,5 @@
-import { MetaLayout, Pillar } from './meta-layout.tsx';
+import { EditorialShell, Pillar } from '../shared/editorial-shell.tsx';
+import './meta.css';
 
 /** A node in the vertical pipeline spine. */
 function Stage({
@@ -41,7 +42,7 @@ function Connector() {
 
 export function DataFlow() {
   return (
-    <MetaLayout
+    <EditorialShell
       kicker="Eiendomsinfo-agent · bak kulissene"
       title={
         <>
@@ -54,10 +55,15 @@ export function DataFlow() {
         <>
           Ett spørsmål går gjennom åtte steg. Heltrukne bokser er <em>implementert</em>; stiplede er{' '}
           <em>veien videre</em>. Det som gjør flyten verdt å vise er ikke at den er stor, men at
-          hver boks er ærlig: vi cacher én kilde, bevisst, og beholder ingenting.
+          hver boks er ærlig: vi cacher én kilde, bevisst, og beholder ingenting. Uttrykket flyten
+          tegnes i ble valgt blant alternativene i{' '}
+          <a className="meta__inlineLink" href="#/prototypes">
+            prototypkatalogen
+          </a>
+          .
         </>
       }
-      sibling={{ href: '#/metodikk', label: 'Metodikk' }}
+      right={{ href: '#/metodikk', label: 'Metodikk' }}
     >
       <div className="meta__legend" aria-hidden="true">
         <span className="meta__legendItem">
@@ -196,6 +202,6 @@ export function DataFlow() {
         hente-grensen, og flere kilder (NILU, Entur, NVE) — alt stiplet ovenfor, ingen av dem
         nødvendige for å vise prinsippet.
       </p>
-    </MetaLayout>
+    </EditorialShell>
   );
 }
