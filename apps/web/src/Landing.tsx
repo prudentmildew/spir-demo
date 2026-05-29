@@ -17,7 +17,7 @@ export function Landing() {
   return (
     <EditorialShell
       isLanding
-      kicker="Hyringsdemo · Consid"
+      kicker="Demo Agent · Consid"
       title={
         <>
           En eiendomsinfo-agent,
