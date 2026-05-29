@@ -1,0 +1,69 @@
+name: Deploy web to GitHub Pages
+
+# Frontend-only deploy. The web app (apps/web) is a static Vite build; its
+# /query and /health calls target an API that is NOT deployed here, so those
+# requests 404 in production. That is intentional — this Pages site is the
+# prototype/portfolio front end, served standalone.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Least privilege for the OIDC-based Pages deployment.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Serialize publishes; never cancel an in-flight deploy (it can leave the site
+# half-published).
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        # Full checkout: vite.config.ts reads repo-root files at build time
+        # (docs/adr, apps/api/test, apps/web/src/prototypes) to compute counts.
+        uses: actions/checkout@v6
+
+      - name: Install pnpm
+        # No version input: action-setup reads packageManager (pnpm@11.3.0)
+        # from the root package.json.
+        uses: pnpm/action-setup@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web
+        run: pnpm --filter web build
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          # Built site, including the public/CNAME copied verbatim by Vite.
+          path: apps/web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
